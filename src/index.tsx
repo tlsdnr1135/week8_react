@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import './css/plugin.css';
 import 'antd/dist/reset.css';
+import 'antd/dist/antd.js';
+import 'antd/dist/antd-with-locales.js';
 import './css/common.css';
 import './css/layout.css';
 import './css/fonts/NanumSquareNeo/fonts.css';
-import './css/plugin.css';
-import './images/img-login-object.jpg';
 
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';

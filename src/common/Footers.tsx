@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-
-export const Footer = () => {
+import { Footer } from 'antd/es/layout/layout';
+export const Footers = () => {
     return (
         <>
-            <footer className="ant-layout-footer css-dev-only-do-not-override-1me4733">
+            <Footer className="ant-layout-footer css-dev-only-do-not-override-1me4733">
                 <div className="box-left">
                     <div className="company-info">
                         <span className="fz-14 fw-exbold fc-gray-400">NHNAD</span>
@@ -22,7 +22,7 @@ export const Footer = () => {
                         Copyright NHN AD. All right reserved.
                     </span>
                 </div>
-            </footer>
+            </Footer>
         </>
     );
 };

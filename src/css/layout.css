@@ -5,8 +5,8 @@
     height:100%;
 }
 
-/* ------------------------- Antd : Layout : Header : Start ------------------------- */
-/* Header Common : Start */
+/* ------------------------- Antd : Layout : Headers : Start ------------------------- */
+/* Headers Common : Start */
 .ant-layout .ant-layout-header {
     display:table;
     position:relative;
@@ -24,7 +24,7 @@
     width:33.33333333%;
     vertical-align:middle;
 }
-/* Header Common : End */
+/* Headers Common : End */
 
 
 
@@ -112,7 +112,7 @@
 }
 /* User-Info : End */
 
-/* ------------------------- Antd : Layout : Header : End ------------------------- */
+/* ------------------------- Antd : Layout : Headers : End ------------------------- */
 
 
 
@@ -402,7 +402,7 @@ p.comp-txt {
 
 
 
-/* ------------------------- Antd : Layout : Footer : Start ------------------------- */
+/* ------------------------- Antd : Layout : Footers : Start ------------------------- */
 .ant-layout .ant-layout-footer {
     display:table;
     width:100%;
@@ -414,7 +414,7 @@ p.comp-txt {
     margin-right:32px;
     line-height:24px;
 }
-/* ------------------------- Antd : Layout : Footer : End ------------------------- */
+/* ------------------------- Antd : Layout : Footers : End ------------------------- */
 
 
 

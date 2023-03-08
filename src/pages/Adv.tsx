@@ -1,14 +1,16 @@
 import React from 'react';
-import { Header } from '../common/Header';
-import { Footer } from '../common/Footer';
+import { Headers } from '../common/Headers';
+import { Footers } from '../common/Footers';
 import { Outlet } from 'react-router-dom';
 
 export const Adv = () => {
     return (
         <>
-            <Header></Header>
-            <Outlet></Outlet>
-            <Footer></Footer>
+            <section className="ant-layout layout css-dev-only-do-not-override-1me4733">
+                <Headers></Headers>
+                <Outlet></Outlet>
+                <Footers></Footers>
+            </section>
         </>
     );
 };

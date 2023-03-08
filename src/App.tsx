@@ -10,28 +10,29 @@ import { ManageAd } from './component/ManageAd';
 export const App = () => {
     const { token, isLogined, role, setLogined } = useLoginStore();
 
-    const [tokens, setToken] = useState(localStorage.getItem('ACCESS_TOKEN') as string);
-    const userIsLoggedIn = !!tokens;
+    const gettoke = localStorage.getItem('ACCESS_TOKEN') as string;
+    const userIsLoggedIn = !!gettoke;
 
     useEffect(() => {
         if (userIsLoggedIn) {
             //토큰이 있으면
-            setLogined(userIsLoggedIn);
+            setLogined(userIsLoggedIn); //토큰값과 롤 저장하기
         } else {
             console.log('익명 사용자 : ', role, '입니다');
         }
-    }, [tokens]);
+    }, []);
 
-    console.log('isLogined  ', isLogined);
+    console.log('roles  = ', role);
+    console.log('isLogined = ', isLogined);
     return (
         <>
             {isLogined ? (
                 <Routes>
                     //로그인 했을 때
                     <Route element={<Adv />}>
-                        <Route path="/regadd" element={<RegAd />} />
+                        <Route path="/regad" element={<RegAd />} />
                         <Route path="/managead" element={<ManageAd />} />
-                        <Route path="/*" element={<Navigate replace to="/regadd" />} />
+                        <Route path="/*" element={<Navigate replace to="/regad" />} />
                     </Route>
                 </Routes>
             ) : (

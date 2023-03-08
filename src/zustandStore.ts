@@ -7,12 +7,14 @@ interface login {
     setLoginedHandler: () => void;
     setLogined: (s: boolean) => void;
     setLogoutHandler: () => void;
+
+    setRole: () => void;
 }
 
 const useLoginStore = create<login>((set) => ({
     token: '',
     isLogined: false,
-    role: 'roelroelroer',
+    role: '',
     setLoginedHandler() {
         set(() => ({
             isLogined: true,
@@ -21,12 +23,16 @@ const useLoginStore = create<login>((set) => ({
     setLogined(s) {
         set(() => ({
             isLogined: s,
+            role: localStorage.getItem('ROLE_GROUP') as string,
         }));
     },
     setLogoutHandler() {
         set(() => ({
             isLogined: false,
         }));
+    },
+    setRole() {
+        set(() => ({}));
     },
 }));
 

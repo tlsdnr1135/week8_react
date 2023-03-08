@@ -4,6 +4,7 @@ import imgLogo from './images/img-login-object.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import useLoginStore from '../zustandStore';
+import imgLogo1 from './images/ico ico-menu-01.jpg';
 
 const onFinish = (values: any) => {
     console.log('Received values of form:', values);
