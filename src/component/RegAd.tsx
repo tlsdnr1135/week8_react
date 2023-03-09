@@ -1,80 +1,236 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Button, Input, Select, Space, Table, Tag } from 'antd';
+import { Button, Input, Modal, Pagination, PaginationProps, Select, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import useLoginStore from '../zustandStore';
+import API from '../api/ApiService';
 
+// private String itemNo;//상품 번호
+//
+// private String itemName;//상품 명
+//
+// private Integer adultYn;//성인 여부 default:true(1)
+//
+// private Long itemOrgCost;//상품 원본 금액
+//
+// private Integer itemActYn;//상품 활성 여부
 interface DataType {
-    key: number;
-    name: string;
-    age: number;
-    address: string;
-    tags: string[];
+    id: number;
+    itemNo: string; //상품번호
+    itemName: string; //상품 명
+    adultYn: number; //성인 여부 default:true(1)
+    itemOrgCost: number; //상품 원본 금액
+    itemActYn: number; //상품 활성 여부
+    // tags: string[];
 }
-
-const columns: ColumnsType<DataType> = [
-    {
-        title: '상품번호',
-        dataIndex: 'name',
-        key: 'name',
-        align: 'center',
-    },
-    {
-        title: '상품명',
-        dataIndex: 'age',
-        key: 'age',
-        align: 'center',
-    },
-    {
-        title: '성인 상품 여부',
-        dataIndex: 'address',
-        key: 'address',
-        align: 'center',
-    },
-    {
-        title: '상품 가격',
-        key: 'tags',
-        dataIndex: 'tags',
-        align: 'center',
-    },
-    {
-        title: '상품 활성화 여부',
-        key: 'tags',
-        dataIndex: 'tags',
-        align: 'center',
-    },
-    {
-        title: '상품 선택',
-        key: 'action',
-        align: 'center',
-        render: (_, record) => (
-            <Button
-                className={
-                    'ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default ant-btn-sm pink'
-                }
-                size="middle"
-            >
-                <a>선택</a>
-            </Button>
-        ),
-    },
-];
-
-const data: DataType[] = [];
-for (let i = 0; i < 100; i++) {
-    data.push({
-        key: i,
-        name: `Edward ${i}`,
-        age: 32,
-        address: `London Park no. ${i}`,
-        tags: ['nice', 'developer'],
-    });
+interface PickButtonType {
+    itemNo: string; //상품번호
+    itemName: string; //상품 명
+    adultYn: number; //성인 여부 default:true(1)
+    defaultV: string;
+}
+interface SelecterType {
+    value: string; //그룹 명
+    label: string;
 }
 
 export const RegAd = () => {
-    const [level, setLevel] = useState(0); //단계를 다섯개 만들기 store에다가
-    const plusLevel = () => {
-        setLevel(level + 1);
+    const [agroup, setAgroup] = useState<SelecterType[]>([
+        {
+            value: 'none',
+            label: '없음',
+        },
+    ]);
+    const [defaultV, setDefaultV] = useState('없당.');
+    const [level, setLevel] = useState(0);
+    console.log('체인지 레벨');
+    const [data, setData] = useState<DataType[]>();
+    const dataRe: DataType[] | undefined = data;
+    // let sdsdssds = dataRe?[0].itemName;
+    // const plusLevel = (s: number) => {
+    //     setLevelel(s);
+    // };
+
+    //조회 버튼
+    const selectButton = (e: any) => {
+        API.get('/api/item/find')
+            .then((response) => {
+                let datas: any = [];
+                response.data.items.map((element: any) => {
+                    datas.push({
+                        id: element.id,
+                        itemNo: element.itemNo,
+                        itemName: element.itemName,
+                        adultYn: element.adultYn,
+                        itemOrgCost: element.itemOrgCost,
+                        itemActYn: element.itemActYn,
+                    });
+                });
+                setData(datas);
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setLevel(1);
     };
+
+    const [pick, setPickButton] = useState<PickButtonType>({
+        itemNo: '',
+        itemName: '',
+        adultYn: 1,
+        defaultV: '없으',
+    });
+    // 선택 버튼
+    const pickButton = (e: any) => {
+        let datas: any = [];
+        API.get('/api/agroup/find')
+            .then((response) => {
+                console.log('냠냠냠냠냠');
+                console.log(response.data.agroups);
+                response.data.agroups.map((element: any) => {
+                    datas.push({
+                        value: element.agroupName,
+                        label: element.agroupName,
+                    });
+                });
+                setAgroup(datas);
+                console.log('냠냠냠냠냠');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        //누를 때 마다 선택한 상품 정보 바뀌어야 함.
+        console.log(parseInt(e.target.value));
+
+        console.log(agroup);
+        const x = {
+            itemNo: dataRe?.[parseInt(e.target.value)].itemNo as string,
+            itemName: dataRe?.[parseInt(e.target.value)].itemName as string,
+            adultYn: dataRe?.[parseInt(e.target.value)].adultYn as number,
+            defaultV: 'sd',
+        };
+        setDefaultV(x.defaultV);
+        setPickButton(x);
+        setLevel(2);
+    };
+
+    const columns: ColumnsType<DataType> = [
+        {
+            title: '상품번호',
+            dataIndex: 'itemNo',
+            key: 'itemNo',
+            align: 'center',
+        },
+        {
+            title: '상품명',
+            dataIndex: 'itemName',
+            key: 'itemName',
+            align: 'center',
+        },
+        {
+            title: '성인 상품 여부',
+            dataIndex: 'adultYn',
+            key: 'adultYn',
+            align: 'center',
+        },
+        {
+            title: '상품 가격',
+            key: 'itemOrgCost',
+            dataIndex: 'itemOrgCost',
+            align: 'center',
+        },
+        {
+            title: '상품 활성화 여부',
+            key: 'itemActYn',
+            dataIndex: 'itemActYn',
+            align: 'center',
+        },
+        {
+            title: '상품 선택',
+            key: 'action',
+            align: 'center',
+            render: (value, record, index) => (
+                <Button
+                    className={
+                        'ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default ant-btn-sm pink'
+                    }
+                    value={index}
+                    onClick={pickButton}
+                    size="middle"
+                >
+                    <a>선택</a>
+                </Button>
+            ),
+        },
+    ];
+    //****************************************************************************************************************
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    let input = '';
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = (e: any) => {
+        console.log(e.value);
+        console.log(input);
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const makeAgroup = () => {};
+    //****************************************************************************************************************
+    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
+
+    //광고 그룹 모달 클릭시
+
+    const onclickSelecter = () => {
+        //광고 그룹 모달 클릭시
+        //광고그룹 가져오기
+        API.get('/api/agroup/find')
+            .then((response) => {
+                console.log('냠냠냠냠냠');
+                console.log(response.data.agroups);
+                let datas: any = [];
+                response.data.agroups.map((element: any) => {
+                    datas.push({
+                        value: element.agroupName,
+                        label: element.agroupName,
+                    });
+                });
+                setAgroup(datas);
+                console.log('냠냠냠냠냠');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    const handleChange = (value: string) => {
+        //광고 그룹 모달 클릭시
+        //광고그룹 가져오기
+        console.log(`selected ${value}`);
+    };
+
+    const madalInput = (e: any) => {
+        //광고 그룹 모달 클릭시
+        //광고그룹 가져오기
+        input = e.target.value;
+        console.log(`selected `, e.target.value);
+    };
+
+    //값을 가져오기 위한
+
+    useEffect(() => {
+        console.log('-----------------------------');
+        console.log(defaultV);
+        console.log(agroup[0].value);
+        setDefaultV(agroup[0].value);
+    }, [agroup]);
+
     //모든 axios요청 헤더에 토큰 싣어 보내기
     return (
         <>
@@ -87,7 +243,7 @@ export const RegAd = () => {
                         <div className="content-body">
                             {/* ***************************************************************************************************** */}
                             {/* ***************************************************************************************************** */}
-                            {level >= 0 && (
+                            {level >= 0 && ( //인풋
                                 <section className="wrap-section wrap-tbl">
                                     <div className="box-header">
                                         <div className="box-left">
@@ -146,7 +302,8 @@ export const RegAd = () => {
                                             <Button
                                                 type="primary"
                                                 className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"
-                                                onClick={plusLevel}
+                                                value={1}
+                                                onClick={selectButton}
                                             >
                                                 <span>조회</span>
                                             </Button>
@@ -156,7 +313,7 @@ export const RegAd = () => {
                             )}
                             {/* ***************************************************************************************************** */}
                             {/* ***************************************************************************************************** */}
-                            {level >= 1 && (
+                            {level >= 1 && ( //조회 표
                                 <section className="wrap-section wrap-datagrid">
                                     <div className="box-header">
                                         <div className="box-left">
@@ -165,13 +322,27 @@ export const RegAd = () => {
                                     </div>
                                     <div className="box-body">
                                         {/*    테이블 자리*/}
-                                        <Table columns={columns} dataSource={data} bordered />
+                                        <Table
+                                            columns={columns}
+                                            dataSource={dataRe}
+                                            pagination={{
+                                                total: dataRe?.length,
+                                                showTotal: showTotal,
+                                                size: 'default',
+                                            }}
+                                            bordered
+                                        />
+                                        {/*<Pagination*/}
+                                        {/*    size="small"*/}
+                                        {/*    total={50}*/}
+                                        {/*    showTotal={showTotal}*/}
+                                        {/*></Pagination>*/}
                                     </div>
                                 </section>
                             )}
                             {/* ***************************************************************************************************** */}
                             {/* ***************************************************************************************************** */}
-                            {level >= 2 && (
+                            {level >= 2 && ( //데이터 표
                                 <section className="wrap-section wrap-tbl">
                                     <div className="box-header">
                                         <div className="box-left">
@@ -198,7 +369,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        NBS_DB10
+                                                                        {pick.itemNo}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -220,7 +391,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        상품상품10
+                                                                        {pick.itemName}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -242,7 +413,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        성인상품
+                                                                        {pick.adultYn}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -254,9 +425,7 @@ export const RegAd = () => {
                                     </div>
                                 </section>
                             )}
-                            {/* ***************************************************************************************************** */}
-                            {/* ***************************************************************************************************** */}
-                            {level >= 3 && (
+                            {level >= 2 && ( //광고그룹
                                 <section className="wrap-section wrap-tbl">
                                     <div className="box-header">
                                         <div className="box-left">
@@ -266,9 +435,11 @@ export const RegAd = () => {
                                             <Button
                                                 type="primary"
                                                 className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"
+                                                onClick={showModal}
                                             >
                                                 <span>신규 그룹 생성</span>
                                             </Button>
+                                            ;
                                         </div>
                                     </div>
                                     <div className="box-body">
@@ -284,22 +455,11 @@ export const RegAd = () => {
                                                 <dd>
                                                     <div className="form-group">
                                                         <Select
-                                                            defaultValue="lucy"
                                                             style={{ width: 120 }}
+                                                            onClick={onclickSelecter}
                                                             // onChange={handleChange}
-                                                            options={[
-                                                                { value: 'jack', label: 'Jack' },
-                                                                { value: 'lucy', label: 'Lucy' },
-                                                                {
-                                                                    value: 'Yiminghe',
-                                                                    label: 'yiminghe',
-                                                                },
-                                                                {
-                                                                    value: 'disabled',
-                                                                    label: 'Disabled',
-                                                                    disabled: true,
-                                                                },
-                                                            ]}
+                                                            defaultValue={defaultV}
+                                                            options={agroup}
                                                         />
                                                     </div>
                                                 </dd>
@@ -308,9 +468,7 @@ export const RegAd = () => {
                                     </div>
                                 </section>
                             )}
-                            {/* ***************************************************************************************************** */}
-                            {/* ***************************************************************************************************** */}
-                            {level >= 4 && (
+                            {level >= 2 && (
                                 <section className="wrap-section wrap-datagrid">
                                     <div className="box-header">
                                         <div className="box-left">
@@ -450,7 +608,7 @@ export const RegAd = () => {
                             )}
                             {/* ***************************************************************************************************** */}
                             {/* ***************************************************************************************************** */}
-                            {level >= 5 && (
+                            {level >= 2 && (
                                 <div className="box-footer">
                                     <div className="box-center">
                                         <Button
@@ -468,6 +626,63 @@ export const RegAd = () => {
                     </div>
                 </div>
             </main>
+            {/* ***************************************************************************************************************************************** */}
+            {/* ***************************************************************************************************************************************** */}
+            <Modal
+                className="ant-modal-content"
+                title="신규 광고 그룹 생성"
+                width={800}
+                open={isModalOpen}
+                // onOk={handleOk}
+                // onCancel={handleCancel}
+                footer={[
+                    <>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"
+                            onClick={handleCancel}
+                        >
+                            <span>취소</span>
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"
+                            onClick={handleOk}
+                        >
+                            <span>등록</span>
+                        </Button>
+                    </>,
+                ]}
+            >
+                <section className="wrap-section wrap-tbl">
+                    <div className="box-body">
+                        <div className="tbl">
+                            <dl>
+                                <dt>
+                                    <div className="dt-inner">
+                                        <span className="fz-16 fw-med fc-7">
+                                            신규 광고그룹 명<i className="txt-essential"></i>
+                                        </span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div className="form-group">
+                                        <Input
+                                            type="text"
+                                            name="groupName"
+                                            defaultValue=""
+                                            onChange={madalInput}
+                                            style={{
+                                                width: '300px',
+                                            }}
+                                        />
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </section>
+            </Modal>
         </>
     );
 };

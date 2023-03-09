@@ -4,6 +4,9 @@ interface login {
     token: string;
     isLogined: boolean;
     role: string;
+    level: number;
+
+    setLevelHandler: (s: number) => void;
     setLoginedHandler: () => void;
     setLogined: (s: boolean) => void;
     setLogoutHandler: () => void;
@@ -15,6 +18,13 @@ const useLoginStore = create<login>((set) => ({
     token: '',
     isLogined: false,
     role: '',
+    level: 0,
+
+    setLevelHandler(s) {
+        set(() => ({
+            level: s,
+        }));
+    },
     setLoginedHandler() {
         set(() => ({
             isLogined: true,
