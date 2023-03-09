@@ -2,18 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { Button, Input, Modal, Pagination, PaginationProps, Select, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import useLoginStore from '../zustandStore';
+import useLoginStore from '../store/useLoginStore';
 import API from '../api/ApiService';
 
-// private String itemNo;//상품 번호
-//
-// private String itemName;//상품 명
-//
-// private Integer adultYn;//성인 여부 default:true(1)
-//
-// private Long itemOrgCost;//상품 원본 금액
-//
-// private Integer itemActYn;//상품 활성 여부
 interface DataType {
     id: number;
     itemNo: string; //상품번호
@@ -41,32 +32,24 @@ export const RegAd = () => {
             label: '없음',
         },
     ]);
+    const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
+        label: '',
+        value: '',
+    });
+
     const [defaultV, setDefaultV] = useState('없당.');
     const [level, setLevel] = useState(0);
     console.log('체인지 레벨');
     const [data, setData] = useState<DataType[]>();
     const dataRe: DataType[] | undefined = data;
-    // let sdsdssds = dataRe?[0].itemName;
-    // const plusLevel = (s: number) => {
-    //     setLevelel(s);
-    // };
+
+    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
 
     //조회 버튼
     const selectButton = (e: any) => {
         API.get('/api/item/find')
             .then((response) => {
-                let datas: any = [];
-                response.data.items.map((element: any) => {
-                    datas.push({
-                        id: element.id,
-                        itemNo: element.itemNo,
-                        itemName: element.itemName,
-                        adultYn: element.adultYn,
-                        itemOrgCost: element.itemOrgCost,
-                        itemActYn: element.itemActYn,
-                    });
-                });
-                setData(datas);
+                setData(response.data.items);
                 console.log(data);
             })
             .catch((error) => {
@@ -83,18 +66,20 @@ export const RegAd = () => {
     });
     // 선택 버튼
     const pickButton = (e: any) => {
-        let datas: any = [];
         API.get('/api/agroup/find')
             .then((response) => {
                 console.log('냠냠냠냠냠');
                 console.log(response.data.agroups);
-                response.data.agroups.map((element: any) => {
-                    datas.push({
-                        value: element.agroupName,
-                        label: element.agroupName,
-                    });
+
+                const group = response.data.agroups.map((item: any) => ({
+                    value: item.agroupName,
+                    label: item.agroupName,
+                }));
+                setAgroup(group);
+                setSelectGroup({
+                    label: response.data.agroups[0].agroupName,
+                    value: response.data.agroups[0].agroupName,
                 });
-                setAgroup(datas);
                 console.log('냠냠냠냠냠');
             })
             .catch((error) => {
@@ -110,7 +95,6 @@ export const RegAd = () => {
             adultYn: dataRe?.[parseInt(e.target.value)].adultYn as number,
             defaultV: 'sd',
         };
-        setDefaultV(x.defaultV);
         setPickButton(x);
         setLevel(2);
     };
@@ -165,71 +149,66 @@ export const RegAd = () => {
         },
     ];
     //****************************************************************************************************************
+    //**** 광고 그룹 모달창 *********************************************************************************************
     const [isModalOpen, setIsModalOpen] = useState(false);
-    let input = '';
+    const [input, setInput] = useState('');
 
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const handleOk = (e: any) => {
-        console.log(e.value);
-        console.log(input);
+    const handleOk = () => {
+        //셀렉트 박스 추가
+        let datasdd = agroup;
+        let temp = {
+            value: input,
+            label: input,
+        };
+        setAgroup([...agroup, temp]);
+        setInput('');
         setIsModalOpen(false);
     };
 
     const handleCancel = () => {
+        setInput('');
         setIsModalOpen(false);
     };
 
-    const makeAgroup = () => {};
     //****************************************************************************************************************
-    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //**** 키워드 모달창 *********************************************************************************************
+    const [isKeyWordModalOpen, setIsKeyWordModalOpen] = useState(false);
 
-    //광고 그룹 모달 클릭시
+    const showKeyWordModal = () => {
+        setIsKeyWordModalOpen(true);
+    };
 
-    const onclickSelecter = () => {
-        //광고 그룹 모달 클릭시
-        //광고그룹 가져오기
-        API.get('/api/agroup/find')
-            .then((response) => {
-                console.log('냠냠냠냠냠');
-                console.log(response.data.agroups);
-                let datas: any = [];
-                response.data.agroups.map((element: any) => {
-                    datas.push({
-                        value: element.agroupName,
-                        label: element.agroupName,
-                    });
-                });
-                setAgroup(datas);
-                console.log('냠냠냠냠냠');
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const KeyWordHandleOk = () => {
+        setIsKeyWordModalOpen(false);
     };
-    const handleChange = (value: string) => {
-        //광고 그룹 모달 클릭시
-        //광고그룹 가져오기
-        console.log(`selected ${value}`);
+
+    const KeyWordHandleCancel = () => {
+        setIsKeyWordModalOpen(false);
     };
+
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+
+    const handleChange = (value: string) =>
+        setSelectGroup({
+            value,
+            label: value,
+        });
 
     const madalInput = (e: any) => {
         //광고 그룹 모달 클릭시
         //광고그룹 가져오기
-        input = e.target.value;
+        setInput(e.target.value);
         console.log(`selected `, e.target.value);
     };
 
     //값을 가져오기 위한
-
-    useEffect(() => {
-        console.log('-----------------------------');
-        console.log(defaultV);
-        console.log(agroup[0].value);
-        setDefaultV(agroup[0].value);
-    }, [agroup]);
 
     //모든 axios요청 헤더에 토큰 싣어 보내기
     return (
@@ -456,9 +435,9 @@ export const RegAd = () => {
                                                     <div className="form-group">
                                                         <Select
                                                             style={{ width: 120 }}
-                                                            onClick={onclickSelecter}
-                                                            // onChange={handleChange}
-                                                            defaultValue={defaultV}
+                                                            // onClick={onclickSelecter}
+                                                            onChange={handleChange}
+                                                            value={selectGroup.value}
                                                             options={agroup}
                                                         />
                                                     </div>
@@ -480,6 +459,7 @@ export const RegAd = () => {
                                             <Button
                                                 type="primary"
                                                 className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default pink"
+                                                onClick={showKeyWordModal}
                                             >
                                                 <span>키워드 추가</span>
                                             </Button>
@@ -670,7 +650,65 @@ export const RegAd = () => {
                                         <Input
                                             type="text"
                                             name="groupName"
-                                            defaultValue=""
+                                            value={input}
+                                            onChange={madalInput}
+                                            style={{
+                                                width: '300px',
+                                            }}
+                                        />
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </section>
+            </Modal>
+            {/* **************************************************************************************************************** */}
+            {/* **************************************************************************************************************** */}
+            {/* **************************************************************************************************************** */}
+            <Modal
+                className="ant-modal-content"
+                title="키워드 추가"
+                width={800}
+                open={isKeyWordModalOpen}
+                // onOk={handleOk}
+                // onCancel={handleCancel}
+                footer={[
+                    <>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"
+                            onClick={KeyWordHandleCancel}
+                        >
+                            <span>취소</span>
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"
+                            onClick={KeyWordHandleOk}
+                        >
+                            <span>등록</span>
+                        </Button>
+                    </>,
+                ]}
+            >
+                <section className="wrap-section wrap-tbl">
+                    <div className="box-body">
+                        <div className="tbl">
+                            <dl>
+                                <dt>
+                                    <div className="dt-inner">
+                                        <span className="fz-16 fw-med fc-7">
+                                            신규 광고그룹 명<i className="txt-essential"></i>
+                                        </span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div className="form-group">
+                                        <Input
+                                            type="text"
+                                            name="groupName"
+                                            value={input}
                                             onChange={madalInput}
                                             style={{
                                                 width: '300px',

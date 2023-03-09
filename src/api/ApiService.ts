@@ -9,4 +9,15 @@ const API = axios.create({
     },
 });
 
+export const APIs = () => ({
+    getList: (parameter: { id: number }) =>
+        API.get('/list', {
+            params: {
+                id: parameter.id,
+            },
+        }),
+});
+
+const { getList } = APIs();
+
 export default API;

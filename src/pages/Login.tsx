@@ -3,7 +3,7 @@ import { Button, Form, Input, Space } from 'antd';
 import imgLogo from './images/img-login-object.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import useLoginStore from '../zustandStore';
+import useLoginStore, { useLoginState, useLoginAction } from '../store/useLoginStore';
 import imgLogo1 from './images/ico ico-menu-01.jpg';
 
 const onFinish = (values: any) => {
@@ -11,7 +11,7 @@ const onFinish = (values: any) => {
 };
 
 export const Login = () => {
-    const { token, isLogined, role, setLoginedHandler } = useLoginStore();
+    const { setLoginedHandler } = useLoginAction();
     let navigate = useNavigate();
 
     const loginForm = {

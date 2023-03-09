@@ -46,4 +46,21 @@ const useLoginStore = create<login>((set) => ({
     },
 }));
 
+export const useLoginState = () =>
+    useLoginStore((state) => ({
+        token: state.token,
+        isLogined: state.isLogined,
+        role: state.role,
+        level: state.level,
+    }));
+
+export const useLoginAction = () =>
+    useLoginStore((state) => ({
+        setLevelHandler: state.setLevelHandler,
+        setLoginedHandler: state.setLoginedHandler,
+        setLogined: state.setLogined,
+        setLogoutHandler: state.setLogoutHandler,
+        setRole: state.setRole,
+    }));
+
 export default useLoginStore;

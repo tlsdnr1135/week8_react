@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useLoginStore from '../zustandStore';
+import useLoginStore from '../store/useLoginStore';
 import { useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
 import { Button, Divider, Menu, MenuProps, Space, Tabs, TabsProps } from 'antd';
