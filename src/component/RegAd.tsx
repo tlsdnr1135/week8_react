@@ -1,101 +1,170 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Input, Modal, Pagination, PaginationProps, Select, Space, Table, Tag } from 'antd';
+import {
+    Button,
+    Input,
+    message,
+    Modal,
+    Pagination,
+    PaginationProps,
+    Select,
+    Space,
+    Table,
+    Tag,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import useLoginStore from '../store/useLoginStore';
-import API from '../api/ApiService';
+import API, { APIs } from '../api/ApiService';
 
 interface DataType {
     id: number;
+    key: number;
     itemNo: string; //상품번호
     itemName: string; //상품 명
-    adultYn: number; //성인 여부 default:true(1)
+    adultYn: number | string; //성인 여부 default:true(1)
     itemOrgCost: number; //상품 원본 금액
-    itemActYn: number; //상품 활성 여부
-    // tags: string[];
+    itemActYn: number | string; //상품 활성 여부
+}
+interface KeyWordType {
+    keywordName: string;
+    bidCost: number;
+}
+interface KeyWordTableType {
+    id: number;
+    key: number | undefined;
+    kwdName: string;
+    manualCnrKwd: number;
+    sellPossKwdYn: number;
 }
 interface PickButtonType {
     itemNo: string; //상품번호
     itemName: string; //상품 명
     adultYn: number; //성인 여부 default:true(1)
-    defaultV: string;
 }
 interface SelecterType {
     value: string; //그룹 명
     label: string;
 }
-
+interface SelectApiType {
+    itemnumber: string;
+    itemname: string;
+}
 export const RegAd = () => {
-    const [agroup, setAgroup] = useState<SelecterType[]>([
-        {
-            value: 'none',
-            label: '없음',
-        },
-    ]);
-    const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
-        label: '',
-        value: '',
-    });
+    const { getItemList, getAgroupSelectBoxList, getKeyWordList } = APIs();
+    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
+    const [level, setLevel] = useState(0); //레벨별 컴포넌트 보여주는 변수
+    const [data, setData] = useState<DataType[]>(); //상품
 
-    const [defaultV, setDefaultV] = useState('없당.');
-    const [level, setLevel] = useState(0);
-    console.log('체인지 레벨');
-    const [data, setData] = useState<DataType[]>();
-    const dataRe: DataType[] | undefined = data;
+    //*********************************************************************************************
+    //*********************************************************************************************
+    //*********************************************************************************************
+    //*****************************상품 조회********************************************************
+    const [itemNo, setItmeNo] = useState('');
+    const [itemName, setItmeName] = useState('');
 
-    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
+    //상품 조회 Input 핸들러
+    const itemNameHandler = (e: any) => {
+        setItmeName(e.target.value);
+    };
+    const itemNoHandler = (e: any) => {
+        setItmeNo(e.target.value);
+    };
 
-    //조회 버튼
+    //조회 버튼(상품 조회)
     const selectButton = (e: any) => {
-        API.get('/api/item/find')
+        const parameter = { itemNo: itemNo, itemName: itemName };
+
+        getItemList(parameter)
             .then((response) => {
-                setData(response.data.items);
-                console.log(data);
+                const temp = response.data.items;
+                temp.forEach((item: DataType) => {
+                    item.key = item.id;
+                    if (item.adultYn === 0) {
+                        item.adultYn = 'NO';
+                    } else {
+                        item.adultYn = 'YES';
+                    }
+                    if (item.itemActYn === 0) {
+                        item.itemActYn = '비활성화';
+                    } else {
+                        item.itemActYn = '활성화';
+                    }
+                });
+                console.log('상품 조회 response = ', temp);
+                setData(temp); //상품 조회 테이블
             })
             .catch((error) => {
                 console.log(error);
             });
-        setLevel(1);
+        setLevel(1); //상품 조회 결과 보여주기
     };
 
-    const [pick, setPickButton] = useState<PickButtonType>({
-        itemNo: '',
-        itemName: '',
-        adultYn: 1,
-        defaultV: '없으',
-    });
+    //*********************************************************************************************
+    //*********************************************************************************************
+    //*********************************************************************************************
+    //***********************************상품 선택**************************************************
+    const [messageApi, contextHolder] = message.useMessage(); //Validation 메시지
+    const [agroup, setAgroup] = useState<SelecterType[]>([]); //광고 그룹 셀렉터
+    const [pick, setPickButton] = useState<PickButtonType>(); //선택한 상품 정보 테이블
+    const [kwdTable, setKwdTable] = useState<KeyWordTableType>();
+
+    const testAgroup = [
+        {
+            label: '채워닝',
+            value: '채워닝',
+            tttt: '채워닝',
+        },
+    ];
+
+    const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
+        label: '',
+        value: '',
+    }); //광고 최종 등록할 때 필요
+
+    // 메시지
     // 선택 버튼
     const pickButton = (e: any) => {
-        API.get('/api/agroup/find')
-            .then((response) => {
-                console.log('냠냠냠냠냠');
-                console.log(response.data.agroups);
+        //비활성화 메시지를 위한 index찾기 작업
+        console.log(e.target.value); //id값
+        let index = data?.findIndex((item) => item.id == e.target.value);
+        console.log('인덱스 값', index); //id값으로 찾은 index값
 
+        if ((data?.[index as number].itemActYn as string) === '비활성화') {
+            messageApi.info('비활성화다');
+            return null;
+        }
+
+        //선택 시 광고그룹 셀렉터 불러오기
+        getAgroupSelectBoxList()
+            .then((response) => {
                 const group = response.data.agroups.map((item: any) => ({
                     value: item.agroupName,
                     label: item.agroupName,
                 }));
                 setAgroup(group);
-                setSelectGroup({
-                    label: response.data.agroups[0].agroupName,
-                    value: response.data.agroups[0].agroupName,
-                });
-                console.log('냠냠냠냠냠');
+                // setSelectGroup({
+                //     label: response.data.agroups[0].agroupName,
+                //     value: response.data.agroups[0].agroupName,
+                // });
             })
             .catch((error) => {
                 console.log(error);
             });
-        //누를 때 마다 선택한 상품 정보 바뀌어야 함.
-        console.log(parseInt(e.target.value));
 
-        console.log(agroup);
-        const x = {
-            itemNo: dataRe?.[parseInt(e.target.value)].itemNo as string,
-            itemName: dataRe?.[parseInt(e.target.value)].itemName as string,
-            adultYn: dataRe?.[parseInt(e.target.value)].adultYn as number,
-            defaultV: 'sd',
+        //선택 시 키워드 리스트 조회
+        // getKeyWordList().then((res) => {
+        //     console.log(res.data.kwds);
+        //     setKwdTable(res.data.kwds);
+        // });
+
+        //누를 때 마다 선택한 상품 정보 바뀌어야 함.
+        console.log('Agroup : ', agroup);
+        const temp = {
+            itemNo: data?.[index as number].itemNo as string,
+            itemName: data?.[index as number].itemName as string,
+            adultYn: data?.[index as number].adultYn as number,
         };
-        setPickButton(x);
+        setPickButton(temp);
         setLevel(2);
     };
 
@@ -139,7 +208,7 @@ export const RegAd = () => {
                     className={
                         'ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default ant-btn-sm pink'
                     }
-                    value={index}
+                    value={record.id}
                     onClick={pickButton}
                     size="middle"
                 >
@@ -148,6 +217,8 @@ export const RegAd = () => {
             ),
         },
     ];
+    //****************************************************************************************************************
+    //****************************************************************************************************************
     //****************************************************************************************************************
     //**** 광고 그룹 모달창 *********************************************************************************************
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,7 +230,6 @@ export const RegAd = () => {
 
     const handleOk = () => {
         //셀렉트 박스 추가
-        let datasdd = agroup;
         let temp = {
             value: input,
             label: input,
@@ -174,45 +244,175 @@ export const RegAd = () => {
         setIsModalOpen(false);
     };
 
-    //****************************************************************************************************************
-    //****************************************************************************************************************
-    //****************************************************************************************************************
-    //**** 키워드 모달창 *********************************************************************************************
-    const [isKeyWordModalOpen, setIsKeyWordModalOpen] = useState(false);
-
-    const showKeyWordModal = () => {
-        setIsKeyWordModalOpen(true);
-    };
-
-    const KeyWordHandleOk = () => {
-        setIsKeyWordModalOpen(false);
-    };
-
-    const KeyWordHandleCancel = () => {
-        setIsKeyWordModalOpen(false);
-    };
-
-    //****************************************************************************************************************
-    //****************************************************************************************************************
-
-    const handleChange = (value: string) =>
-        setSelectGroup({
-            value,
-            label: value,
-        });
-
     const madalInput = (e: any) => {
         //광고 그룹 모달 클릭시
         //광고그룹 가져오기
         setInput(e.target.value);
         console.log(`selected `, e.target.value);
     };
+    // const handleChange = (value: string) =>
+    //     setSelectGroup({
+    //         value,
+    //         label: value,
+    //     });
 
-    //값을 가져오기 위한
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //**** 키워드 모달창 *********************************************************************************************
+    const [isKeyWordModalOpen, setIsKeyWordModalOpen] = useState(false);
+    const [keyWord, setkeyWord] = useState('');
+    const [bidCost, setBidCost] = useState(0);
+    const [keywordTable, setKeywordTable] = useState<KeyWordType[]>();
 
+    const showKeyWordModal = () => {
+        setIsKeyWordModalOpen(true);
+    };
+
+    const KeyWordHandleOk = () => {
+        //Input가져오기
+        let temp = {
+            keywordName: keyWord,
+            bidCost: bidCost,
+        };
+
+        if (bidCost < 90) {
+            messageApi.info('입찰가는 최소 90원을 입력해야 합니다.');
+            return null;
+        } else if (bidCost > 99000) {
+            messageApi.info('입찰가는 최대 99000원을 입력해야 합니다.');
+            return null;
+        }
+
+        //초기에 값이 없으면 배열 만들어주기
+        if (keywordTable == null) {
+            let temparr = [];
+            temparr.push(temp);
+            setKeywordTable(temparr);
+        } else {
+            let count = 0;
+            keywordTable.forEach((items) => {
+                if (items.keywordName == keyWord) {
+                    count = -1;
+                    messageApi.info('현재 동일한 키워드명이 존재합니다.');
+                }
+            });
+            if (count === -1) {
+                return null;
+            }
+            setKeywordTable([...keywordTable, temp]);
+        }
+        console.log('***************************************************************');
+        setkeyWord('');
+        setIsKeyWordModalOpen(false);
+    };
+
+    const KeyWordHandleCancel = () => {
+        console.log('캔슬');
+        setkeyWord('');
+        setBidCost(0);
+        console.log(keyWord);
+        setIsKeyWordModalOpen(false);
+    };
+
+    const KeywordMadalInput = (e: any) => {
+        setkeyWord(e.target.value);
+        console.log(`selected `, e.target.value);
+    };
+    const bidCostMadalInput = (e: any) => {
+        setBidCost(e.target.value);
+        console.log(`selected `, e.target.value);
+    };
+
+    const deleteKeyword = (e: any) => {
+        console.log();
+        console.log(e.target.value);
+        //키워드 테이블 삭제
+        setKeywordTable(keywordTable?.filter((_, index) => index !== parseInt(e.target.value)));
+        console.log(keywordTable);
+    };
+
+    const keywordColumns: ColumnsType<KeyWordType> = [
+        {
+            title: '키워드명',
+            dataIndex: 'keywordName',
+            key: 'keywordName',
+            align: 'center',
+        },
+        {
+            title: '입찰가',
+            dataIndex: 'bidCost',
+            key: 'bidCost',
+            align: 'center',
+        },
+        {
+            title: '키워드 삭제',
+            key: 'action',
+            align: 'center',
+            render: (value, record, index) => (
+                <Button
+                    className={
+                        'ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default ant-btn-sm pink'
+                    }
+                    value={index}
+                    onClick={deleteKeyword}
+                    size="middle"
+                >
+                    <a>삭제</a>
+                </Button>
+            ),
+        },
+    ];
+
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //**** 입찰가 모달창 *********************************************************************************************
+    const [isBidCostModalOpen, setIsBidCostModalOpen] = useState(false);
+    const [bidCostInput2, setBidCostInput2] = useState(0);
+
+    const bidCostShowModal = () => {
+        setIsBidCostModalOpen(true);
+    };
+
+    const bidCostHandleOk = () => {
+        if (bidCostInput2 < 90) {
+            messageApi.info('입찰가는 최소 90원을 입력해야 합니다.');
+            return null;
+        } else if (bidCostInput2 > 99000) {
+            messageApi.info('입찰가는 최대 99000원을 입력해야 합니다.');
+            return null;
+        }
+        //셀렉트 박스 추가
+        const sameBid = keywordTable?.map((element: KeyWordType) => ({
+            keywordName: element.keywordName,
+            bidCost: bidCostInput2 as number,
+            // bidCost: element.bidCost,
+        }));
+        setBidCostInput2(0);
+        setKeywordTable(sameBid);
+        setIsBidCostModalOpen(false);
+    };
+
+    const bidCostHandleCancel = () => {
+        setBidCostInput2(0);
+        setIsBidCostModalOpen(false);
+    };
+
+    const bidCostModalInput2 = (e: any) => {
+        //광고 그룹 모달 클릭시
+        //광고그룹 가져오기
+        setBidCostInput2(e.target.value);
+        console.log(`selected `, e.target.value);
+    };
     //모든 axios요청 헤더에 토큰 싣어 보내기
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+
     return (
         <>
+            {contextHolder}
             <main className="ant-layout-content css-dev-only-do-not-override-1me4733">
                 <div className="site-layout-content">
                     <div className="inner-content">
@@ -248,6 +448,8 @@ export const RegAd = () => {
                                                             placeholder="상품명을 입력하세요."
                                                             className="ant-input css-dev-only-do-not-override-1me4733"
                                                             type="text"
+                                                            // value={itemName}
+                                                            onChange={itemNameHandler}
                                                             style={{ width: '500px' }}
                                                         />
                                                     </div>
@@ -268,6 +470,8 @@ export const RegAd = () => {
                                                             placeholder="상품번호을 입력하세요."
                                                             className="ant-input css-dev-only-do-not-override-1me4733"
                                                             type="text"
+                                                            // value={itemNo}
+                                                            onChange={itemNoHandler}
                                                             // defaultValue
                                                             style={{ width: '500px' }}
                                                         />
@@ -303,19 +507,14 @@ export const RegAd = () => {
                                         {/*    테이블 자리*/}
                                         <Table
                                             columns={columns}
-                                            dataSource={dataRe}
+                                            dataSource={data}
                                             pagination={{
-                                                total: dataRe?.length,
+                                                total: data?.length,
                                                 showTotal: showTotal,
                                                 size: 'default',
                                             }}
                                             bordered
                                         />
-                                        {/*<Pagination*/}
-                                        {/*    size="small"*/}
-                                        {/*    total={50}*/}
-                                        {/*    showTotal={showTotal}*/}
-                                        {/*></Pagination>*/}
                                     </div>
                                 </section>
                             )}
@@ -348,7 +547,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        {pick.itemNo}
+                                                                        {pick?.itemNo}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -370,7 +569,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        {pick.itemName}
+                                                                        {pick?.itemName}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -392,7 +591,7 @@ export const RegAd = () => {
                                                             <span className="table">
                                                                 <span className="table-cell">
                                                                     <b className="fz-14 fc-gray-400">
-                                                                        {pick.adultYn}
+                                                                        {pick?.adultYn}
                                                                     </b>
                                                                 </span>
                                                             </span>
@@ -434,11 +633,12 @@ export const RegAd = () => {
                                                 <dd>
                                                     <div className="form-group">
                                                         <Select
-                                                            style={{ width: 120 }}
+                                                            style={{ width: 250 }}
                                                             // onClick={onclickSelecter}
-                                                            onChange={handleChange}
-                                                            value={selectGroup.value}
-                                                            options={agroup}
+                                                            // onChange={handleChange}
+                                                            defaultValue="광고그룹을 선택해주세요"
+                                                            // value={selectGroup.value}
+                                                            options={testAgroup}
                                                         />
                                                     </div>
                                                 </dd>
@@ -466,6 +666,7 @@ export const RegAd = () => {
                                             <Button
                                                 type="primary"
                                                 className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default gray"
+                                                onClick={bidCostShowModal}
                                             >
                                                 <span>입찰가 일괄 설정</span>
                                             </Button>
@@ -473,115 +674,16 @@ export const RegAd = () => {
                                     </div>
                                     {/* ************************************************************************************ */}
                                     <div className="box-body">
-                                        <div className="ant-table-wrapper css-dev-only-do-not-override-1me4733">
-                                            <div className="ant-spin-nested-loading css-dev-only-do-not-override-1me4733">
-                                                <div className="ant-spin-container">
-                                                    <div className="ant-table ant-table-bordered ant-table-empty">
-                                                        <div className="ant-table-container">
-                                                            <div className="ant-table-content">
-                                                                <table
-                                                                    style={{ tableLayout: 'auto' }}
-                                                                >
-                                                                    <colgroup />
-                                                                    <thead className="ant-table-thead">
-                                                                        <tr>
-                                                                            <th
-                                                                                className="ant-table-cell"
-                                                                                scope="col"
-                                                                                style={{
-                                                                                    textAlign:
-                                                                                        'center',
-                                                                                }}
-                                                                            >
-                                                                                키워드명
-                                                                            </th>
-                                                                            <th
-                                                                                className="ant-table-cell"
-                                                                                scope="col"
-                                                                                style={{
-                                                                                    textAlign:
-                                                                                        'center',
-                                                                                }}
-                                                                            >
-                                                                                입찰가
-                                                                            </th>
-                                                                            <th
-                                                                                className="ant-table-cell"
-                                                                                scope="col"
-                                                                                style={{
-                                                                                    textAlign:
-                                                                                        'center',
-                                                                                }}
-                                                                            >
-                                                                                키워드 삭제
-                                                                            </th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody className="ant-table-tbody">
-                                                                        <tr className="ant-table-placeholder">
-                                                                            <td
-                                                                                className="ant-table-cell"
-                                                                                colSpan={3}
-                                                                            >
-                                                                                <div className="css-dev-only-do-not-override-1me4733 ant-empty ant-empty-normal">
-                                                                                    <div className="ant-empty-image">
-                                                                                        <svg
-                                                                                            width={
-                                                                                                64
-                                                                                            }
-                                                                                            height={
-                                                                                                41
-                                                                                            }
-                                                                                            viewBox="0 0 64 41"
-                                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                                        >
-                                                                                            <g
-                                                                                                transform="translate(0 1)"
-                                                                                                fill="none"
-                                                                                                fillRule="evenodd"
-                                                                                            >
-                                                                                                <ellipse
-                                                                                                    fill="#f5f5f5"
-                                                                                                    cx={
-                                                                                                        32
-                                                                                                    }
-                                                                                                    cy={
-                                                                                                        33
-                                                                                                    }
-                                                                                                    rx={
-                                                                                                        32
-                                                                                                    }
-                                                                                                    ry={
-                                                                                                        7
-                                                                                                    }
-                                                                                                />
-                                                                                                <g
-                                                                                                    fillRule="nonzero"
-                                                                                                    stroke="#d9d9d9"
-                                                                                                >
-                                                                                                    <path d="M55 12.76L44.854 1.258C44.367.474 43.656 0 42.907 0H21.093c-.749 0-1.46.474-1.947 1.257L9 12.761V22h46v-9.24z" />
-                                                                                                    <path
-                                                                                                        d="M41.613 15.931c0-1.605.994-2.93 2.227-2.931H55v18.137C55 33.26 53.68 35 52.05 35h-40.1C10.32 35 9 33.259 9 31.137V13h11.16c1.233 0 2.227 1.323 2.227 2.928v.022c0 1.605 1.005 2.901 2.237 2.901h14.752c1.232 0 2.237-1.308 2.237-2.913v-.007z"
-                                                                                                        fill="#fafafa"
-                                                                                                    />
-                                                                                                </g>
-                                                                                            </g>
-                                                                                        </svg>
-                                                                                    </div>
-                                                                                    <div className="ant-empty-description">
-                                                                                        No data
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <Table
+                                            columns={keywordColumns}
+                                            dataSource={keywordTable}
+                                            pagination={{
+                                                total: keywordTable?.length,
+                                                showTotal: showTotal,
+                                                size: 'default',
+                                            }}
+                                            bordered
+                                        />
                                     </div>
                                     {/* ************************************************************************************ */}
                                 </section>
@@ -671,8 +773,6 @@ export const RegAd = () => {
                 title="키워드 추가"
                 width={800}
                 open={isKeyWordModalOpen}
-                // onOk={handleOk}
-                // onCancel={handleCancel}
                 footer={[
                     <>
                         <Button
@@ -699,7 +799,83 @@ export const RegAd = () => {
                                 <dt>
                                     <div className="dt-inner">
                                         <span className="fz-16 fw-med fc-7">
-                                            신규 광고그룹 명<i className="txt-essential"></i>
+                                            키워드명 입력<i className="txt-essential"></i>
+                                        </span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div className="form-group">
+                                        <Input
+                                            type="text"
+                                            name="addKwdName"
+                                            onChange={KeywordMadalInput}
+                                            className="ant-input css-dev-only-do-not-override-1me4733"
+                                            value={keyWord}
+                                            style={{ width: '300px' }}
+                                        />
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div className="dt-inner">
+                                        <span className="fz-16 fw-med fc-7">
+                                            입찰가 입력<i className="txt-essential"></i>
+                                        </span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div className="form-group">
+                                        <Input
+                                            type="number"
+                                            name="addKwdBidCost"
+                                            onChange={bidCostMadalInput}
+                                            className="ant-input css-dev-only-do-not-override-1me4733"
+                                            value={bidCost}
+                                            style={{ width: '300px' }}
+                                        />
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </section>
+            </Modal>
+            {/* **************************************************************************************************************** */}
+            {/* **************************************************************************************************************** */}
+            {/* **************************************************************************************************************** */}
+            <Modal
+                className="ant-modal-content"
+                title="키워드 입찰가 일괄 설정"
+                width={800}
+                open={isBidCostModalOpen}
+                footer={[
+                    <>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"
+                            onClick={bidCostHandleCancel}
+                        >
+                            <span>취소</span>
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"
+                            onClick={bidCostHandleOk}
+                        >
+                            <span>등록</span>
+                        </Button>
+                    </>,
+                ]}
+            >
+                <section className="wrap-section wrap-tbl">
+                    <div className="box-body">
+                        <div className="tbl">
+                            <dl>
+                                <dt>
+                                    <div className="dt-inner">
+                                        <span className="fz-16 fw-med fc-7">
+                                            입찰가 입력<i className="txt-essential"></i>
                                         </span>
                                     </div>
                                 </dt>
@@ -708,8 +884,8 @@ export const RegAd = () => {
                                         <Input
                                             type="text"
                                             name="groupName"
-                                            value={input}
-                                            onChange={madalInput}
+                                            value={bidCostInput2}
+                                            onChange={bidCostModalInput2}
                                             style={{
                                                 width: '300px',
                                             }}
