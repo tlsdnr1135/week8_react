@@ -24,7 +24,10 @@ export const APIs = () => ({
     getAgroupSelectBoxList: () => API.get('/api/agroup/find'),
 
     //키워드 리스트 조회
-    getKeyWordList: () => API.get('/api/keyword/find'),
+    // getKeyWordList: () => API.get('/api/keyword/find'),
+
+    //광고 등록하기
+    setAd: (data: { id: string }) => API.post('/api/ad/save', { id: data.id }),
 });
 
 //헤더가 필요 없는 요청

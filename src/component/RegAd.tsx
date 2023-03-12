@@ -42,15 +42,19 @@ interface PickButtonType {
     adultYn: number; //성인 여부 default:true(1)
 }
 interface SelecterType {
+    key: number; //agroupId
     value: string; //그룹 명
     label: string;
+    regTime: string;
+    agroupActYn: number;
+    agroupUseActYn: number;
 }
 interface SelectApiType {
     itemnumber: string;
     itemname: string;
 }
 export const RegAd = () => {
-    const { getItemList, getAgroupSelectBoxList, getKeyWordList } = APIs();
+    const { getItemList, getAgroupSelectBoxList, setAd } = APIs();
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [level, setLevel] = useState(0); //레벨별 컴포넌트 보여주는 변수
     const [data, setData] = useState<DataType[]>(); //상품
@@ -108,13 +112,13 @@ export const RegAd = () => {
     const [pick, setPickButton] = useState<PickButtonType>(); //선택한 상품 정보 테이블
     const [kwdTable, setKwdTable] = useState<KeyWordTableType>();
 
-    const testAgroup = [
-        {
-            label: '채워닝',
-            value: '채워닝',
-            tttt: '채워닝',
-        },
-    ];
+    // const testAgroup = [
+    //     {
+    //         label: '채워닝',
+    //         value: '채워닝',
+    //         tttt: '채워닝',
+    //     },
+    // ];
 
     const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
         label: '',
@@ -137,9 +141,14 @@ export const RegAd = () => {
         //선택 시 광고그룹 셀렉터 불러오기
         getAgroupSelectBoxList()
             .then((response) => {
+                console.log(response.data.agroups);
                 const group = response.data.agroups.map((item: any) => ({
+                    key: item.id,
                     value: item.agroupName,
                     label: item.agroupName,
+                    regTime: item.regTime,
+                    agroupActYn: item.agroupActYn,
+                    agroupUseActYn: item.agroupUseActYn,
                 }));
                 setAgroup(group);
                 // setSelectGroup({
@@ -231,8 +240,12 @@ export const RegAd = () => {
     const handleOk = () => {
         //셀렉트 박스 추가
         let temp = {
+            key: 1,
             value: input,
             label: input,
+            regTime: input,
+            agroupActYn: 1,
+            agroupUseActYn: 1,
         };
         setAgroup([...agroup, temp]);
         setInput('');
@@ -304,6 +317,7 @@ export const RegAd = () => {
         }
         console.log('***************************************************************');
         setkeyWord('');
+        setBidCost(0);
         setIsKeyWordModalOpen(false);
     };
 
@@ -405,7 +419,12 @@ export const RegAd = () => {
         setBidCostInput2(e.target.value);
         console.log(`selected `, e.target.value);
     };
-    //모든 axios요청 헤더에 토큰 싣어 보내기
+
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    //****************************************************************************************************************
+    const regAdEvent = () => {};
+
     //****************************************************************************************************************
     //****************************************************************************************************************
     //****************************************************************************************************************
@@ -638,7 +657,7 @@ export const RegAd = () => {
                                                             // onChange={handleChange}
                                                             defaultValue="광고그룹을 선택해주세요"
                                                             // value={selectGroup.value}
-                                                            options={testAgroup}
+                                                            options={agroup}
                                                         />
                                                     </div>
                                                 </dd>
@@ -696,6 +715,7 @@ export const RegAd = () => {
                                         <Button
                                             type="primary"
                                             className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg ant-btn-block pink"
+                                            onClick={regAdEvent}
                                         >
                                             <span>광고 등록</span>
                                         </Button>
