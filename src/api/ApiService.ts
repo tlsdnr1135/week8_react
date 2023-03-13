@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { KeyWordType } from '../component/RegAd';
 
 //헤더
 const API = axios.create({
@@ -23,11 +24,25 @@ export const APIs = () => ({
     //광고그룹 셀렉터 조회
     getAgroupSelectBoxList: () => API.get('/api/agroup/find'),
 
-    //키워드 리스트 조회
-    // getKeyWordList: () => API.get('/api/keyword/find'),
-
     //광고 등록하기
-    setAd: (data: { id: string }) => API.post('/api/ad/save', { id: data.id }),
+    setAd: (parameter: {
+        adv: { name: string };
+        agroup: { agroupName: string };
+        item: { id: number };
+        kwd: KeyWordType[];
+    }) =>
+        API.post('/api/ad/save', {
+            adv: {
+                name: parameter.adv.name as string,
+            },
+            agroup: {
+                agroupName: parameter.agroup.agroupName as string,
+            },
+            item: {
+                id: parameter.item.id as number,
+            },
+            kwd: parameter.kwd,
+        }),
 });
 
 //헤더가 필요 없는 요청

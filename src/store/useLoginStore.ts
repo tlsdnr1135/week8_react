@@ -5,9 +5,10 @@ interface login {
     isLogined: boolean;
     role: string;
     level: number;
+    email: string;
 
     setLevelHandler: (s: number) => void;
-    setLoginedHandler: () => void;
+    setLoginedHandler: (s: string) => void;
     setLogined: (s: boolean) => void;
     setLogoutHandler: () => void;
 
@@ -19,15 +20,17 @@ const useLoginStore = create<login>((set) => ({
     isLogined: false,
     role: '',
     level: 0,
+    email: '',
 
     setLevelHandler(s) {
         set(() => ({
             level: s,
         }));
     },
-    setLoginedHandler() {
+    setLoginedHandler(s) {
         set(() => ({
             isLogined: true,
+            email: s,
         }));
     },
     setLogined(s) {
@@ -52,6 +55,7 @@ export const useLoginState = () =>
         isLogined: state.isLogined,
         role: state.role,
         level: state.level,
+        email: state.email,
     }));
 
 export const useLoginAction = () =>

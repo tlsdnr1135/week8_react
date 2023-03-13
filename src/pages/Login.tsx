@@ -50,8 +50,9 @@ export const Login = () => {
                 //로그인 토큰 저장
                 localStorage.setItem('ACCESS_TOKEN', response.headers.imsulbinheader);
                 localStorage.setItem('ROLE_GROUP', response.headers.role_group);
+                localStorage.setItem('ID', email);
 
-                setLoginedHandler();
+                setLoginedHandler(email);
 
                 navigate('/regadd', { replace: true });
             })

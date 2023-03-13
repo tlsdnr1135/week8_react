@@ -13,7 +13,7 @@ import {
     Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import useLoginStore from '../store/useLoginStore';
+import useLoginStore, { useLoginState } from '../store/useLoginStore';
 import API, { APIs } from '../api/ApiService';
 
 interface DataType {
@@ -25,8 +25,8 @@ interface DataType {
     itemOrgCost: number; //상품 원본 금액
     itemActYn: number | string; //상품 활성 여부
 }
-interface KeyWordType {
-    keywordName: string;
+export interface KeyWordType {
+    kwdName: string;
     bidCost: number;
 }
 interface KeyWordTableType {
@@ -37,6 +37,7 @@ interface KeyWordTableType {
     sellPossKwdYn: number;
 }
 interface PickButtonType {
+    id: number; // 상품 아이디
     itemNo: string; //상품번호
     itemName: string; //상품 명
     adultYn: number; //성인 여부 default:true(1)
@@ -55,6 +56,7 @@ interface SelectApiType {
 }
 export const RegAd = () => {
     const { getItemList, getAgroupSelectBoxList, setAd } = APIs();
+    const { email } = useLoginState();
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [level, setLevel] = useState(0); //레벨별 컴포넌트 보여주는 변수
     const [data, setData] = useState<DataType[]>(); //상품
@@ -111,15 +113,6 @@ export const RegAd = () => {
     const [agroup, setAgroup] = useState<SelecterType[]>([]); //광고 그룹 셀렉터
     const [pick, setPickButton] = useState<PickButtonType>(); //선택한 상품 정보 테이블
     const [kwdTable, setKwdTable] = useState<KeyWordTableType>();
-
-    // const testAgroup = [
-    //     {
-    //         label: '채워닝',
-    //         value: '채워닝',
-    //         tttt: '채워닝',
-    //     },
-    // ];
-
     const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
         label: '',
         value: '',
@@ -135,6 +128,9 @@ export const RegAd = () => {
 
         if ((data?.[index as number].itemActYn as string) === '비활성화') {
             messageApi.info('비활성화다');
+            if ((data?.[index as number].itemActYn as string) === '비활성화') {
+                setLevel(1);
+            }
             return null;
         }
 
@@ -151,29 +147,25 @@ export const RegAd = () => {
                     agroupUseActYn: item.agroupUseActYn,
                 }));
                 setAgroup(group);
-                // setSelectGroup({
-                //     label: response.data.agroups[0].agroupName,
-                //     value: response.data.agroups[0].agroupName,
-                // });
+                setSelectGroup({
+                    label: response.data.agroups[0].agroupName,
+                    value: response.data.agroups[0].agroupName,
+                });
             })
             .catch((error) => {
                 console.log(error);
             });
 
-        //선택 시 키워드 리스트 조회
-        // getKeyWordList().then((res) => {
-        //     console.log(res.data.kwds);
-        //     setKwdTable(res.data.kwds);
-        // });
-
         //누를 때 마다 선택한 상품 정보 바뀌어야 함.
         console.log('Agroup : ', agroup);
         const temp = {
+            id: data?.[index as number].id as number,
             itemNo: data?.[index as number].itemNo as string,
             itemName: data?.[index as number].itemName as string,
             adultYn: data?.[index as number].adultYn as number,
         };
         setPickButton(temp);
+
         setLevel(2);
     };
 
@@ -263,11 +255,11 @@ export const RegAd = () => {
         setInput(e.target.value);
         console.log(`selected `, e.target.value);
     };
-    // const handleChange = (value: string) =>
-    //     setSelectGroup({
-    //         value,
-    //         label: value,
-    //     });
+    const handleChange = (value: string) =>
+        setSelectGroup({
+            value: value,
+            label: value,
+        });
 
     //****************************************************************************************************************
     //****************************************************************************************************************
@@ -285,7 +277,7 @@ export const RegAd = () => {
     const KeyWordHandleOk = () => {
         //Input가져오기
         let temp = {
-            keywordName: keyWord,
+            kwdName: keyWord,
             bidCost: bidCost,
         };
 
@@ -305,7 +297,7 @@ export const RegAd = () => {
         } else {
             let count = 0;
             keywordTable.forEach((items) => {
-                if (items.keywordName == keyWord) {
+                if (items.kwdName == keyWord) {
                     count = -1;
                     messageApi.info('현재 동일한 키워드명이 존재합니다.');
                 }
@@ -349,8 +341,8 @@ export const RegAd = () => {
     const keywordColumns: ColumnsType<KeyWordType> = [
         {
             title: '키워드명',
-            dataIndex: 'keywordName',
-            key: 'keywordName',
+            dataIndex: 'kwdName',
+            key: 'kwdName',
             align: 'center',
         },
         {
@@ -399,7 +391,7 @@ export const RegAd = () => {
         }
         //셀렉트 박스 추가
         const sameBid = keywordTable?.map((element: KeyWordType) => ({
-            keywordName: element.keywordName,
+            kwdName: element.kwdName,
             bidCost: bidCostInput2 as number,
             // bidCost: element.bidCost,
         }));
@@ -423,7 +415,29 @@ export const RegAd = () => {
     //****************************************************************************************************************
     //****************************************************************************************************************
     //****************************************************************************************************************
-    const regAdEvent = () => {};
+    const regAdEvent = () => {
+        console.log('꾸루꾸루꾸 : ', localStorage.getItem('ID'));
+        const parameter = {
+            adv: {
+                name: localStorage.getItem('ID') as string,
+            },
+            agroup: {
+                agroupName: selectGroup.value as string,
+            },
+            item: {
+                id: pick?.id as number,
+            },
+            kwd: keywordTable!,
+        };
+        console.log(parameter);
+        setAd(parameter)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     //****************************************************************************************************************
     //****************************************************************************************************************
@@ -654,7 +668,7 @@ export const RegAd = () => {
                                                         <Select
                                                             style={{ width: 250 }}
                                                             // onClick={onclickSelecter}
-                                                            // onChange={handleChange}
+                                                            onChange={handleChange}
                                                             defaultValue="광고그룹을 선택해주세요"
                                                             // value={selectGroup.value}
                                                             options={agroup}
