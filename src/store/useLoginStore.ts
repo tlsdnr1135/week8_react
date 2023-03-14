@@ -20,7 +20,7 @@ const useLoginStore = create<login>((set) => ({
     isLogined: false,
     role: '',
     level: 0,
-    email: '',
+    email: '', //현재 아이디
 
     setLevelHandler(s) {
         set(() => ({
@@ -31,6 +31,7 @@ const useLoginStore = create<login>((set) => ({
         set(() => ({
             isLogined: true,
             email: s,
+            role: localStorage.getItem('ROLE_GROUP') as string,
         }));
     },
     setLogined(s) {
@@ -41,6 +42,7 @@ const useLoginStore = create<login>((set) => ({
     },
     setLogoutHandler() {
         set(() => ({
+            role: '',
             isLogined: false,
         }));
     },

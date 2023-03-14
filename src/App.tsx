@@ -6,6 +6,8 @@ import { create, useStore } from 'zustand';
 import useLoginStore from './store/useLoginStore';
 import { RegAd } from './component/RegAd';
 import { ManageAd } from './component/ManageAd';
+import Admin from './pages/Admin';
+import { Sample } from './component/Sample';
 
 export const App = () => {
     const { token, isLogined, role, setLogined } = useLoginStore();
@@ -29,11 +31,19 @@ export const App = () => {
             {isLogined ? (
                 <Routes>
                     //로그인 했을 때
-                    <Route element={<Adv />}>
-                        <Route path="/regad" element={<RegAd />} />
-                        <Route path="/managead" element={<ManageAd />} />
-                        <Route path="/*" element={<Navigate replace to="/regad" />} />
-                    </Route>
+                    {role === 'ROLE_ADV' && (
+                        <Route element={<Adv />}>
+                            <Route path="/regad" element={<RegAd />} />
+                            <Route path="/managead" element={<ManageAd />} />
+                            <Route path="/*" element={<Navigate replace to="/regad" />} />
+                        </Route>
+                    )}
+                    {role === 'ROLE_ADMIN' && (
+                        <Route element={<Admin />}>
+                            <Route path="/admin" element={<Sample />} />
+                            <Route path="/*" element={<Navigate replace to="/admin" />} />
+                        </Route>
+                    )}
                 </Routes>
             ) : (
                 //비로그인

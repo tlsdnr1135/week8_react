@@ -137,8 +137,8 @@ export const RegAd = () => {
         //선택 시 광고그룹 셀렉터 불러오기
         getAgroupSelectBoxList()
             .then((response) => {
-                console.log(response.data.agroups);
-                const group = response.data.agroups.map((item: any) => ({
+                console.log(response.data.agroupFindResDtos);
+                const group = response.data.agroupFindResDtos.map((item: any) => ({
                     key: item.id,
                     value: item.agroupName,
                     label: item.agroupName,
@@ -148,8 +148,8 @@ export const RegAd = () => {
                 }));
                 setAgroup(group);
                 setSelectGroup({
-                    label: response.data.agroups[0].agroupName,
-                    value: response.data.agroups[0].agroupName,
+                    label: response.data.agroupFindResDtos[0].agroupName,
+                    value: response.data.agroupFindResDtos[0].agroupName,
                 });
             })
             .catch((error) => {
@@ -668,7 +668,8 @@ export const RegAd = () => {
                                                         <Select
                                                             style={{ width: 250 }}
                                                             // onClick={onclickSelecter}
-                                                            onChange={handleChange}
+                                                            // onClick={handleChange}
+                                                            // onChange={handleChange}
                                                             defaultValue="광고그룹을 선택해주세요"
                                                             // value={selectGroup.value}
                                                             options={agroup}

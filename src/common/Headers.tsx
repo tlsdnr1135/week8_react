@@ -77,9 +77,7 @@ export const Headers = () => {
                     <Space split={<Divider type="vertical" />}>
                         <Space>
                             <i className="ico ico-user-info"></i>
-                            <span className="fz-16 fc-gray-300">
-                                {/*{sessionStorage.getItem('id')}*/}
-                            </span>
+                            <span className="fz-16 fc-gray-300">{localStorage.getItem('ID')}</span>
                         </Space>
                         <Button className="gray" size="small" onClick={Logout}>
                             로그아웃
