@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Login } from './pages/Login';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Adv from './pages/Adv';
-import { create, useStore } from 'zustand';
 import useLoginStore from './store/useLoginStore';
-import { RegAd } from './component/RegAd';
-import { ManageAd } from './component/ManageAd';
-import Admin from './pages/Admin';
-import { Sample } from './component/Sample';
+import { RegAd } from './pages/adv/RegAd';
+import { ManageAd } from './pages/adv/ManageAd';
+
+import { Sample } from './pages/admin/Sample';
+import { EnhencedRegAd } from './pages/adv/EnhencedRegAd';
+import { Admin } from './pages/Admin';
 
 export const App = () => {
     const { token, isLogined, role, setLogined } = useLoginStore();
@@ -24,16 +25,15 @@ export const App = () => {
         }
     }, []);
 
-    console.log('roles  = ', role);
-    console.log('isLogined = ', isLogined);
     return (
         <>
-            {isLogined ? (
+            {userIsLoggedIn ? (
                 <Routes>
                     //로그인 했을 때
                     {role === 'ROLE_ADV' && (
                         <Route element={<Adv />}>
-                            <Route path="/regad" element={<RegAd />} />
+                            {/*<Route path="/regad" element={<RegAd />} />*/}
+                            <Route path="/regad" element={<EnhencedRegAd />} />
                             <Route path="/managead" element={<ManageAd />} />
                             <Route path="/*" element={<Navigate replace to="/regad" />} />
                         </Route>

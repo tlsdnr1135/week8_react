@@ -13,8 +13,8 @@ import {
     Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import useLoginStore, { useLoginState } from '../store/useLoginStore';
-import API, { APIs } from '../api/ApiService';
+import useLoginStore, { useLoginState } from '../../store/useLoginStore';
+import API, { APIs } from '../../api/ApiService';
 
 interface DataType {
     id: number;
@@ -42,7 +42,7 @@ interface PickButtonType {
     itemName: string; //상품 명
     adultYn: number; //성인 여부 default:true(1)
 }
-interface SelecterType {
+interface AgroupSelecterType {
     key: number; //agroupId
     value: string; //그룹 명
     label: string;
@@ -110,12 +110,12 @@ export const RegAd = () => {
     //*********************************************************************************************
     //***********************************상품 선택**************************************************
     const [messageApi, contextHolder] = message.useMessage(); //Validation 메시지
-    const [agroup, setAgroup] = useState<SelecterType[]>([]); //광고 그룹 셀렉터
+    const [agroup, setAgroup] = useState<AgroupSelecterType[]>([]); //광고 그룹 셀렉터
     const [pick, setPickButton] = useState<PickButtonType>(); //선택한 상품 정보 테이블
     const [kwdTable, setKwdTable] = useState<KeyWordTableType>();
     const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
-        label: '',
-        value: '',
+        label: '광고그룹을 선택해주세요',
+        value: '광고그룹을 선택해주세요',
     }); //광고 최종 등록할 때 필요
 
     // 메시지
@@ -147,10 +147,6 @@ export const RegAd = () => {
                     agroupUseActYn: item.agroupUseActYn,
                 }));
                 setAgroup(group);
-                setSelectGroup({
-                    label: response.data.agroupFindResDtos[0].agroupName,
-                    value: response.data.agroupFindResDtos[0].agroupName,
-                });
             })
             .catch((error) => {
                 console.log(error);
@@ -241,6 +237,10 @@ export const RegAd = () => {
         };
         setAgroup([...agroup, temp]);
         setInput('');
+        setSelectGroup({
+            label: input,
+            value: input,
+        });
         setIsModalOpen(false);
     };
 
@@ -669,9 +669,9 @@ export const RegAd = () => {
                                                             style={{ width: 250 }}
                                                             // onClick={onclickSelecter}
                                                             // onClick={handleChange}
-                                                            // onChange={handleChange}
+                                                            onChange={handleChange}
                                                             defaultValue="광고그룹을 선택해주세요"
-                                                            // value={selectGroup.value}
+                                                            value={selectGroup.value}
                                                             options={agroup}
                                                         />
                                                     </div>
@@ -681,7 +681,7 @@ export const RegAd = () => {
                                     </div>
                                 </section>
                             )}
-                            {level >= 2 && (
+                            {level >= 2 && ( //키워드 리스트
                                 <section className="wrap-section wrap-datagrid">
                                     <div className="box-header">
                                         <div className="box-left">

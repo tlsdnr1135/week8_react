@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { KeyWordType } from '../component/RegAd';
+import { KeyWordType } from '../pages/adv/RegAd';
 
 //헤더
 const API = axios.create({
@@ -43,6 +43,7 @@ export const APIs = () => ({
             },
             kwd: parameter.kwd,
         }),
+    getAdv: () => API.get('/api/agroup/find'),
 });
 
 //헤더가 필요 없는 요청
