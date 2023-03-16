@@ -21,6 +21,7 @@ export const APIs = () => ({
                 itemname: parameter.itemName,
             },
         }),
+
     //광고그룹 셀렉터 조회
     getAgroupSelectBoxList: () => API.get('/api/agroup/find'),
 
@@ -43,7 +44,26 @@ export const APIs = () => ({
             },
             kwd: parameter.kwd,
         }),
-    getAdv: () => API.get('/api/agroup/find'),
+
+    //광고주 불러오기
+    getAdv: (parameter: { name: string }) =>
+        API.get('/api/adv/find', {
+            params: {
+                name: parameter.name,
+            },
+        }),
+    //광고주 활성여부 변화
+    updateAdvAdIngActYn: (parameter: { name: string; adIngActYn: number }) =>
+        API.put('/api/adv/update', {
+            name: parameter.name,
+            adIngActYn: parameter.adIngActYn,
+        }),
+    //광고주 일 제한 예산
+    updateAdvDayLimitBudget: (parameter: { name: string; dayLimitBudget: number }) =>
+        API.put('/api/adv/update', {
+            name: parameter.name,
+            dayLimitBudget: parameter.dayLimitBudget,
+        }),
 });
 
 //헤더가 필요 없는 요청

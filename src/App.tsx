@@ -25,6 +25,7 @@ export const App = () => {
         }
     }, []);
 
+    console.log('APP');
     return (
         <>
             {userIsLoggedIn ? (
