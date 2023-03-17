@@ -36,7 +36,9 @@ export const Headers = () => {
     //초기값과 커렌트 다르면
     // if (current != urls) {
     useEffect(() => {
+        console.log('헤더의 유즈이펙트');
         let state = '';
+        console.log(urls);
         switch (urls) {
             case '/regad':
                 state = '/regad';
