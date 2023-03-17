@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-
-import { Button, Input, Modal, Switch, Table } from 'antd';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { APIs } from '../../api/ApiService';
 import { AdvMngType } from '../../DataType/ManageType';
+import { Button, Input, Modal, Switch } from 'antd';
 
 export const ManageAd = () => {
-    const { getAdv, updateAdvAdIngActYn } = APIs(); //api
+    const navigate = useNavigate();
+    const { getAdv, updateAdvAdIngActYn, updateAdvDayLimitBudget } = APIs(); //api
     const [adv, setAdv] = useState<AdvMngType>();
     const [isModalOpen, setIsModalOpen] = useState(false); //광고주 모달
     const [input, setInput] = useState('0'); //광고주 모달 인풋
@@ -49,7 +50,6 @@ export const ManageAd = () => {
         item.eventMoneyBalanceDesc = item.eventMoneyBalance
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        console.log('eventMoneyBalanceDesc = ', item.eventMoneyBalanceDesc);
     };
     //광고주 스위치
     const advSwitch = (e: any) => {
@@ -70,6 +70,8 @@ export const ManageAd = () => {
             .catch((err) => {
                 console.log(err);
             });
+        alert('변경 완료 되었습니다.');
+        navigate('/manage');
     };
     //모달
     const modalHandle = (e: any) => {
@@ -79,7 +81,7 @@ export const ManageAd = () => {
             setInput('');
         } else {
             //100원 단위가 아닐경우
-            if (cost === 0 || cost % 100 != 0) {
+            if (cost % 100 != 0) {
                 alert('100원 단위로 입력해주세요');
                 return null;
             }
@@ -90,6 +92,16 @@ export const ManageAd = () => {
             console.log(temp);
             setAdv({ ...temp! });
             //API추가
+            updateAdvDayLimitBudget({
+                name: localStorage.getItem('ID') as string,
+                dayLimitBudget: cost,
+            })
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
 
         setIsModalOpen(false);
@@ -100,7 +112,6 @@ export const ManageAd = () => {
         setInput(e.target.value);
     };
     //모달 변경 시 api
-
     return (
         <>
             <main className="ant-layout-content css-dev-only-do-not-override-1me4733">
@@ -242,7 +253,7 @@ export const ManageAd = () => {
                                                                     <Button
                                                                         type="primary"
                                                                         size={'middle'}
-                                                                        className="ant-btn-sm"
+                                                                        className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink "
                                                                         onClick={() =>
                                                                             setIsModalOpen(true)
                                                                         }
@@ -257,6 +268,59 @@ export const ManageAd = () => {
                                                     </span>
                                                 </div>
                                             </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </section>
+                            <section className="wrap-section wrap-tbl">
+                                <div className="box-header">
+                                    <div className="box-left">
+                                        <div className="box-left">
+                                            <h2 className="fz-24 fc-gray-700">상품 조회</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="box-body">
+                                    <div className="tbl">
+                                        <dl>
+                                            <dt>
+                                                <div className="dt-inner">
+                                                    <span className="fz-15 fc-gray-500">
+                                                        상품명
+                                                    </span>
+                                                </div>
+                                            </dt>
+                                            <dd>
+                                                <div className="form-group">
+                                                    <div className="box-left">
+                                                        <Input
+                                                            name="itemName"
+                                                            placeholder="상품명을 입력하세요."
+                                                            className="ant-input css-dev-only-do-not-override-1me4733"
+                                                            type="text"
+                                                            // value={itemName}
+                                                            // onChange={itemNameHandler}
+                                                            style={{ width: '500px' }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                            <div className="box-right">
+                                                <dd>
+                                                    {/*<div className="form-group">*/}
+                                                    <div className="box-right">
+                                                        <Button
+                                                            type="primary"
+                                                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink "
+                                                            value={1}
+                                                            // onClick={selectButton}
+                                                        >
+                                                            <span>그룹 조회</span>
+                                                        </Button>
+                                                    </div>
+                                                    {/*</div>*/}
+                                                </dd>
+                                            </div>
                                         </dl>
                                     </div>
                                 </div>

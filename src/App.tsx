@@ -4,11 +4,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Adv from './pages/Adv';
 import useLoginStore from './store/useLoginStore';
 import { RegAd } from './pages/adv/RegAd';
-import { ManageAd } from './pages/adv/ManageAd';
+import { Manage } from './pages/adv/Manage';
 
 import { Sample } from './pages/admin/Sample';
 import { EnhencedRegAd } from './pages/adv/EnhencedRegAd';
 import { Admin } from './pages/Admin';
+import { ManageAd } from './component/manage/ManageAd';
+import { ManageAgroup } from './component/manage/ManageAgroup';
 
 export const App = () => {
     const { token, isLogined, role, setLogined } = useLoginStore();
@@ -33,9 +35,11 @@ export const App = () => {
                     //로그인 했을 때
                     {role === 'ROLE_ADV' && (
                         <Route element={<Adv />}>
-                            {/*<Route path="/regad" element={<RegAd />} />*/}
                             <Route path="/regad" element={<EnhencedRegAd />} />
-                            <Route path="/managead" element={<ManageAd />} />
+                            <Route element={<Manage />}>
+                                <Route path="/manageagroup" element={<ManageAgroup />} />
+                                <Route path="/managead" element={<ManageAd />} />
+                            </Route>
                             <Route path="/*" element={<Navigate replace to="/regad" />} />
                         </Route>
                     )}

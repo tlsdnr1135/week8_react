@@ -60,7 +60,7 @@ export const APIs = () => ({
         }),
     //광고주 일 제한 예산
     updateAdvDayLimitBudget: (parameter: { name: string; dayLimitBudget: number }) =>
-        API.put('/api/adv/update', {
+        API.put('/api/adv/update/daylb', {
             name: parameter.name,
             dayLimitBudget: parameter.dayLimitBudget,
         }),

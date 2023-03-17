@@ -1,44 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useLoginStore from '../store/useLoginStore';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
 import { Button, Divider, Menu, MenuProps, Space, Tabs, TabsProps } from 'antd';
 
 const advItems: MenuProps['items'] = [
     {
         label: '광고 등록',
-        key: 'regAd',
+        key: '/regad',
         // danger: true,
         icon: <i className="ico ico-menu-01" />,
     },
     {
         label: '광고 관리',
-        key: 'manageAd',
+        key: '/managead',
+        // key: '/manageagroup',
         icon: <i className="ico ico-menu-02" />,
     },
 ];
 const adminItems: MenuProps['items'] = [
     {
         label: '광고 검수',
-        key: 'app',
+        key: '/app',
         icon: <i className="ico ico-menu-02" />,
     },
 ];
 
 export const Headers = () => {
-    const { token, isLogined, role, setLoginedHandler, setLogoutHandler } = useLoginStore();
-    const [current, setCurrent] = useState('regAd');
-    console.log('커렌트', current);
+    const url = useLocation();
+    let urls = ('/' + url.pathname.substring(1, url.pathname.length)) as string;
+    const { role, setLogoutHandler } = useLoginStore();
+    const [current, setCurrent] = useState('/regad');
     let navigate = useNavigate();
 
-    const moveAdvPage = (e: any) => {
-        console.log(e.key);
-        setCurrent(e.key);
-        if ('regAd' === e.key) {
-            navigate('/regad', { replace: false });
-        } else {
-            navigate('/managead', { replace: false });
+    //초기값과 커렌트 다르면
+    // if (current != urls) {
+    useEffect(() => {
+        let state = '';
+        switch (urls) {
+            case '/regad':
+                state = '/regad';
+                // setCurrent('/regad');
+                break;
+            case '/managed':
+                state = '/managead';
+                // setCurrent('/managed');
+                break;
+            default:
+                state = '/managead';
+                // setCurrent('/managed');
+                break;
         }
+        console.log('마지막 상태', state);
+        setCurrent(state);
+        // navigate(urls);
+    }, [current]);
+    console.log(current);
+    console.log(urls);
+
+    // }
+
+    //초기값을 가져온다.
+    //초기값이 위의 두개값이 아니라면 둘중에 하나에 넣어준다.
+    console.log(('/' + url.pathname.substring(1, url.pathname.length)) as string);
+    console.log(urls);
+
+    const moveAdvPage = (e: any) => {
+        setCurrent(e.key);
+        navigate(e.key);
     };
     const moveAdminPage = () => {};
     const Logout = () => {
