@@ -1,6 +1,6 @@
 import React from 'react';
-import { Headers } from '../common/Headers';
-import { Footers } from '../common/Footers';
+import { Headers } from '../../common/Headers';
+import { Footers } from '../../common/Footers';
 import { Outlet } from 'react-router-dom';
 
 export const Sample = () => {
