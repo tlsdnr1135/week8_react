@@ -114,8 +114,8 @@ export const RegAd = () => {
     const [pick, setPickButton] = useState<PickButtonType>(); //선택한 상품 정보 테이블
     const [kwdTable, setKwdTable] = useState<KeyWordTableType>();
     const [selectGroup, setSelectGroup] = useState<{ label: string; value: string }>({
-        label: '',
-        value: '',
+        label: '광고그룹을 선택해 주세요',
+        value: '광고그룹을 선택해 주세요',
     }); //광고 최종 등록할 때 필요
 
     // 메시지
@@ -147,10 +147,10 @@ export const RegAd = () => {
                     agroupUseActYn: item.agroupUseActYn,
                 }));
                 setAgroup(group);
-                setSelectGroup({
-                    label: response.data.agroupFindResDtos[0].agroupName,
-                    value: response.data.agroupFindResDtos[0].agroupName,
-                });
+                // setSelectGroup({
+                //     label: response.data.agroupFindResDtos[0].agroupName,
+                //     value: response.data.agroupFindResDtos[0].agroupName,
+                // });
             })
             .catch((error) => {
                 console.log(error);
@@ -241,6 +241,13 @@ export const RegAd = () => {
         };
         setAgroup([...agroup, temp]);
         setInput('');
+        let selectGroups = {
+            // value: 'sdsd',
+            // label: 'sdd',
+            value: input,
+            label: input,
+        };
+        setSelectGroup(selectGroups);
         setIsModalOpen(false);
     };
 
@@ -669,9 +676,9 @@ export const RegAd = () => {
                                                             style={{ width: 250 }}
                                                             // onClick={onclickSelecter}
                                                             // onClick={handleChange}
-                                                            // onChange={handleChange}
-                                                            defaultValue="광고그룹을 선택해주세요"
-                                                            // value={selectGroup.value}
+                                                            onChange={handleChange}
+                                                            placeholder="광고그룹을 선택해주세요"
+                                                            value={selectGroup.value}
                                                             options={agroup}
                                                         />
                                                     </div>
