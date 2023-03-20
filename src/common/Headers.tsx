@@ -35,28 +35,28 @@ export const Headers = () => {
 
     //초기값과 커렌트 다르면
     // if (current != urls) {
-    useEffect(() => {
-        console.log('헤더의 유즈이펙트');
-        let state = '';
-        console.log(urls);
-        switch (urls) {
-            case '/regad':
-                state = '/regad';
-                // setCurrent('/regad');
-                break;
-            case '/managed':
-                state = '/managead';
-                // setCurrent('/managed');
-                break;
-            default:
-                state = '/managead';
-                // setCurrent('/managed');
-                break;
-        }
-        console.log('마지막 상태', state);
-        setCurrent(state);
-        // navigate(urls);
-    }, [current]);
+    // useEffect(() => {
+    //     console.log('헤더의 유즈이펙트');
+    //     let state = '';
+    //     console.log(urls);
+    //     switch (urls) {
+    //         case '/regad':
+    //             state = '/regad';
+    //             // setCurrent('/regad');
+    //             break;
+    //         case '/managed':
+    //             state = '/managead';
+    //             // setCurrent('/managed');
+    //             break;
+    //         default:
+    //             state = '/managead';
+    //             // setCurrent('/managed');
+    //             break;
+    //     }
+    //     console.log('마지막 상태', state);
+    //     setCurrent(state);
+    //     // navigate(urls);
+    // }, [current]);
     console.log(current);
     console.log(urls);
 

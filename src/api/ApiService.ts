@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { useState } from 'react';
-import { KeyWordType } from '../pages/adv/RegAd';
+import React, { useState } from 'react';
+import { KeyWordType } from '../DataType/RedAdType';
 
 //헤더
 const API = axios.create({
@@ -63,6 +63,22 @@ export const APIs = () => ({
         API.put('/api/adv/update/daylb', {
             name: parameter.name,
             dayLimitBudget: parameter.dayLimitBudget,
+        }),
+    //그룹 리스트 조회
+    getAdGroupList: (parameter: { name: string; agroupName: string }) =>
+        API.get('/api/ad/find/manage', {
+            params: { name: parameter.name, agroupName: parameter.agroupName },
+        }),
+    //OnOff일괄 설정
+    getAgroupOnOff: (parameter: { idList: React.Key[]; yn: number }) =>
+        API.put('/api/agroup/find/onoff', {
+            longList: parameter.idList,
+            yn: parameter.yn,
+        }),
+    //광고그룹 추가하기
+    saveAgroup: (parameter: { agroupName: string }) =>
+        API.post('/api/agroup/save', {
+            agroupName: parameter.agroupName,
         }),
 });
 
