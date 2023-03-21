@@ -3,14 +3,15 @@ import { Outlet, Route, useNavigate } from 'react-router-dom';
 import { Button, Input } from 'antd';
 import { AdGroupList } from '../../../DataType/ManageType';
 import { APIs } from '../../../api/ApiService';
+import { AgroupAPIs } from '../../../api/AgroupAPIs';
 
 interface props {
     agroupSearchInput: string;
     setAgroupSearchInput: React.Dispatch<React.SetStateAction<string>>;
-    setAgroupList: React.Dispatch<React.SetStateAction<AdGroupList[] | undefined>>;
+    setAgroupList: React.Dispatch<React.SetStateAction<AdGroupList[]>>;
 }
 export const AgroupSearch = ({ agroupSearchInput, setAgroupSearchInput, setAgroupList }: props) => {
-    const { getAdGroupList } = APIs(); //api
+    const { getAdGroupList } = AgroupAPIs(); //api
     //agroup 모달 인풋
     const agroupSearchInputHandle = (e: any) => {
         setAgroupSearchInput(e.target.value);

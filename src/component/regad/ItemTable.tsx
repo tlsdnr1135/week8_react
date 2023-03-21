@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, message, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { APIs } from '../../api/ApiService';
 import { AgroupSelecterType, DataType, PickButtonType } from '../../DataType/RedAdType';
+import { AgroupAPIs } from '../../api/AgroupAPIs';
 
 interface ItemSelectParams {
     setLevels: React.Dispatch<React.SetStateAction<number>>;
@@ -19,7 +19,7 @@ export const ItemTable = ({
     setPickButtons,
 }: ItemSelectParams) => {
     const [messageApi, contextHolder] = message.useMessage(); //Validation 메시지
-    const { getAgroupSelectBoxList } = APIs();
+    const { getAgroupSelectBoxList } = AgroupAPIs();
 
     const pickButton = (e: any) => {
         //비활성화 메시지를 위한 index찾기 작업
@@ -35,7 +35,7 @@ export const ItemTable = ({
             return null;
         }
 
-        //선택 시 광고그룹 셀렉터 불러오기
+        //선택 시 광고그룹 셀렉터BOX 불러오기
         getAgroupSelectBoxList()
             .then((response) => {
                 console.log(response.data.agroupFindResDtos);

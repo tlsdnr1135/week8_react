@@ -6,12 +6,11 @@ import { Button, Input, Modal, Switch } from 'antd';
 import { AdvInformation } from './managead/AdvInformation';
 import { AgroupSearch } from './managead/AgroupSearch';
 import { AgroupList } from './managead/agroupList';
+import { AgroupAPIs } from '../../api/AgroupAPIs';
 
 export const ManageAd = () => {
-    const navigate = useNavigate();
-    const { getAdv, updateAdvAdIngActYn, updateAdvDayLimitBudget, getAdGroupList } = APIs(); //api
     const [agroupSearchInput, setAgroupSearchInput] = useState(''); //그룹 조회 인풋
-    const [agroupList, setAgroupList] = useState<AdGroupList[]>(); //그룹 리스트
+    const [agroupList, setAgroupList] = useState<AdGroupList[]>([]); //그룹 리스트
 
     //모달 변경 시 api
     return (
@@ -34,10 +33,6 @@ export const ManageAd = () => {
                     </div>
                 </div>
             </main>
-            {/******************************************************************************************************/}
-            {/******************************************************************************************************/}
-            {/******************************************************************************************************/}
-            {/******************************************************************************************************/}
         </>
     );
 };

@@ -36,31 +36,7 @@ export const AdvInformation = () => {
                 });
         }
     }, []);
-    // //초기 API세팅
-    // if (adv === undefined) {
-    //     console.log('adv');
-    //     console.log(adv);
-    //     getAdv({ name: localStorage.getItem('ID') as string })
-    //         .then((res) => {
-    //             console.log(res);
-    //             const temp: AdvMngType | undefined = {
-    //                 advId: localStorage.getItem('ID') as string,
-    //                 adIngActYn: res.data.adIngActYn,
-    //                 balance: res.data.balance,
-    //                 eventMoneyBalance: res.data.eventMoneyBalance,
-    //                 dayLimitBudget: res.data.dayLimitBudget,
-    //                 statusBalance: '',
-    //                 statusDayLimitBudget: '',
-    //                 balanceDesc: '',
-    //                 eventMoneyBalanceDesc: '',
-    //             };
-    //             procAdvMngType(temp);
-    //             setAdv(temp);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // }
+
     //Adv Desc 가공
     const procAdvMngType = (item: AdvMngType) => {
         //잔액 상태

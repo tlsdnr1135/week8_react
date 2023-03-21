@@ -1,24 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, PaginationProps, Table } from 'antd';
-import { AdGroupList } from '../../../DataType/ManageType';
+import { AdGroupList, AgroupListCsv } from '../../../DataType/ManageType';
 import { ColumnsType } from 'antd/es/table';
-import { DataType } from '../../../DataType/RedAdType';
+import { CSVLink, CSVDownload } from 'react-csv';
 import { APIs } from '../../../api/ApiService';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AgroupAPIs } from '../../../api/AgroupAPIs';
 
 interface props {
     agroupList: AdGroupList[];
-    setAgroupList: React.Dispatch<React.SetStateAction<AdGroupList[] | undefined>>;
+    setAgroupList: React.Dispatch<React.SetStateAction<AdGroupList[]>>;
 }
 export const AgroupList = ({ agroupList, setAgroupList }: props) => {
     const navigate = useNavigate();
-    const { getAdGroupList, getAgroupOnOff, saveAgroup } = APIs(); //api
+    const { getAdGroupList, getAgroupOnOff, saveAgroup, deleteAgroupActYn, updateAgroupActYn } =
+        AgroupAPIs(); //api
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [checkBoxList, setCheckBoxList] = useState<React.Key[]>([]); //체크박스 리스트
     const [isModalOpen, setIsModalOpen] = useState(false); //광고그룹 등록 모달
     const [input, setInput] = useState(''); //광고그룹 모달 인풋
+    const [csv, setCsv] = useState<AgroupListCsv[]>([]); //csv Data
 
-    if (agroupList === undefined) {
+    //csv
+    const headers = [
+        { label: '번호', key: 'key' },
+        { label: '그룹명', key: 'agroupName' },
+        { label: '그룹 ON/OFF', key: 'agroupUseActYn' },
+        { label: '상품 수', key: 'itemCount' },
+    ];
+
+    //csvDataHandle
+    const CsvOnClickHandle = () => {
+        let CsvData: AgroupListCsv[];
+        CsvData = agroupList.map((item) => ({
+            key: 0,
+            agroupName: item.agroupName,
+            agroupUseActYn: item.agroupUseActYn,
+            itemCount: item.adUseConfigYn + '/' + item.adActYn,
+            // itemCount: 0,
+        }));
+        let index = 1;
+        CsvData.forEach((item) => {
+            item.key = index;
+            item.agroupUseActYn = item.agroupUseActYn === 1 ? 'ON' : 'OFF';
+            index += 1;
+        });
+        setCsv(CsvData);
+    };
+
+    if (agroupList.length == 0) {
         getAdGroupList({
             name: localStorage.getItem('ID') as string,
             agroupName: '',
@@ -40,13 +70,22 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             dataIndex: 'agroupName',
             key: 'agroupName',
             align: 'center',
-            render: (value, record, index) => <a>{index + 1}</a>,
+            render: (value, record, index) => <span>{index + 1}</span>,
         },
         {
             title: '그룹명',
             key: 'agroupName',
             dataIndex: 'agroupName',
             align: 'center',
+            render: (value, record, index) => (
+                <Link
+                    to={'/manageagroup'}
+                    state={{ agroupName: agroupList?.[index].agroupName }}
+                    style={{ color: 'blue', textDecoration: 'underline' }}
+                >
+                    {agroupList?.[index].agroupName}
+                </Link>
+            ),
         },
         {
             title: '그룹 ON/OFF',
@@ -54,7 +93,13 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             dataIndex: 'agroupUseActYn',
             align: 'center',
             render: (value, record, index) => (
-                <a>{agroupList?.[index].agroupUseActYn === 1 ? 'ON' : 'OFF'}</a>
+                <button
+                    value={agroupList?.[index].agroupName}
+                    onClick={AgroupListTableOnOffChange}
+                    style={{ color: 'dodgerblue', textDecoration: 'underline' }}
+                >
+                    {agroupList?.[index].agroupUseActYn === 1 ? 'ON' : 'OFF'}
+                </button>
             ),
         },
         {
@@ -62,12 +107,27 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             key: 'action',
             align: 'center',
             render: (value, record, index) => (
-                <a>
+                <span>
                     {agroupList?.[index].adUseConfigYn}/{agroupList?.[index].adActYn}
-                </a>
+                </span>
             ),
         },
     ];
+    const AgroupListTableOnOffChange = (e: any) => {
+        console.log('--------------------------------------------');
+        console.log(e.target.value);
+        console.log('--------------------------------------------');
+        updateAgroupActYn({ name: e.target.value })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((res) => {
+                console.log(res);
+            });
+        alert('그룹 사용이 변경되었습니다.');
+        window.location.replace('/managead');
+    };
+
     //테이블 체크박스
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: AdGroupList[]) => {
@@ -91,9 +151,6 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         }
         getAgroupOnOff({ idList: checkBoxList, yn: e.target.value })
             .then((res) => {
-                let temp = agroupList!;
-                setAgroupList([]);
-                setAgroupList([...temp]);
                 console.log(res);
             })
             .catch((err) => {
@@ -112,7 +169,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         console.log('InputModalChange', e.target.value);
         setInput(e.target.value);
     };
-    //모달
+    //등록 모달
     const modalHandle = (e: any) => {
         let temp = true;
         if (e.target.value === 'CANCEL') {
@@ -165,7 +222,8 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                         </Button>
                         <Button
                             type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg white "
+                            className="white "
+                            size={'large'}
                             value={0}
                             onClick={agroupOnOffButton}
                         >
@@ -173,7 +231,8 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                         </Button>
                         <Button
                             type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray "
+                            className="gray"
+                            size={'large'}
                             value={'OK'}
                             onClick={() => setIsModalOpen(true)}
                         >
@@ -183,27 +242,42 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                             type="primary"
                             className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg white "
                             value={'CANCEL'}
+                            onClick={() => {
+                                //이거 밖으로
+                                if (checkBoxList.length == 0) {
+                                    alert('체크리스트를 선택해 주십시오');
+                                } else {
+                                    deleteAgroupActYn({ idList: checkBoxList })
+                                        .then((res) => {
+                                            console.log(res);
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        });
+                                    alert('삭제 되었습니다.');
+                                    window.location.replace('/managead');
+                                }
+                            }}
                         >
                             <span>그룹삭제</span>
                         </Button>
-                        <Button
-                            type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg white "
-                            value={'CANCEL'}
+
+                        <CSVLink
+                            data={csv}
+                            headers={headers}
+                            onClick={CsvOnClickHandle}
+                            filename={`Test`}
                         >
-                            <span>다운로드</span>
-                        </Button>
+                            <Button
+                                type="primary"
+                                className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray "
+                                value={'CANCEL'}
+                                // onClick={CsvOnClickHandle}
+                            >
+                                <span>다운로드</span>
+                            </Button>
+                        </CSVLink>
                     </div>
-                    {/*<div className="box-right">*/}
-                    {/*    <Button*/}
-                    {/*        type="primary"*/}
-                    {/*        className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink "*/}
-                    {/*        value={1}*/}
-                    {/*        // onClick={agroupListSearchButton}*/}
-                    {/*    >*/}
-                    {/*        <span>그룹 조회2</span>*/}
-                    {/*    </Button>*/}
-                    {/*</div>*/}
                 </div>
                 <div className="box-body">
                     <Table
@@ -249,7 +323,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                             value={'OK'}
                             onClick={modalHandle}
                         >
-                            <span>변경</span>
+                            <span>등록</span>
                         </Button>
                     </>,
                 ]}
