@@ -24,7 +24,8 @@ export const ItemTable = ({
     const pickButton = (e: any) => {
         //비활성화 메시지를 위한 index찾기 작업
         console.log(e.target.value); //id값
-        let index = datas?.findIndex((item) => item.id == e.target.value);
+        console.log(datas);
+        let index = e.target.value;
         console.log('인덱스 값', index); //id값으로 찾은 index값
 
         if ((datas?.[index as number].itemActYn as string) === '비활성화') {
@@ -54,8 +55,10 @@ export const ItemTable = ({
             });
 
         //누를 때 마다 선택한 상품 정보 바뀌어야 함. -> 선택시 나오는 단일 표
+        console.log('-------------------------------------------');
+        console.log(datas?.[index].key);
         const temp = {
-            id: datas?.[index as number].id as number,
+            id: datas?.[index as number].key as number,
             itemNo: datas?.[index as number].itemNo as string,
             itemName: datas?.[index as number].itemName as string,
             adultYn: datas?.[index as number].adultYn as number,
@@ -105,7 +108,7 @@ export const ItemTable = ({
                     className={
                         'ant-btn css-dev-only-do-not-override-1me4733 ant-btn-default ant-btn-sm pink'
                     }
-                    value={record.id}
+                    value={index}
                     onClick={pickButton}
                     size="middle"
                 >

@@ -26,7 +26,7 @@ export const AgroupAPIs = () => ({
         }),
 
     //광고그룹 사용 설정 여부(agroupUseActYn)변경
-    updateAgroupActYn: (parameter: { name: string }) =>
+    updateAgroupUseActYn: (parameter: { name: string }) =>
         API.put('/api/agroup/update/agroupuseactyn', {
             agroupName: parameter.name,
         }),

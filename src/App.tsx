@@ -38,6 +38,7 @@ export const App = () => {
                             <Route element={<Manage />}>
                                 <Route path="/managead" element={<ManageAd />} />
                                 <Route path="/manageagroup" element={<ManageAgroup />} />
+                                {/*<Route path="/manage"*/}
                             </Route>
                             <Route path="/*" element={<Navigate replace to="/regad" />} />
                         </Route>

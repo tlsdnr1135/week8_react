@@ -13,7 +13,7 @@ interface props {
 }
 export const AgroupList = ({ agroupList, setAgroupList }: props) => {
     const navigate = useNavigate();
-    const { getAdGroupList, getAgroupOnOff, saveAgroup, deleteAgroupActYn, updateAgroupActYn } =
+    const { getAdGroupList, getAgroupOnOff, saveAgroup, deleteAgroupActYn, updateAgroupUseActYn } =
         AgroupAPIs(); //api
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [checkBoxList, setCheckBoxList] = useState<React.Key[]>([]); //체크박스 리스트
@@ -48,20 +48,23 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         setCsv(CsvData);
     };
 
-    if (agroupList.length == 0) {
-        getAdGroupList({
-            name: localStorage.getItem('ID') as string,
-            agroupName: '',
-        })
-            .then((res) => {
-                console.log('그룹리스트 조회 버튼 눌렀을 때');
-                console.log(res.data);
-                setAgroupList(res.data);
+    //초기 세팅
+    useEffect(() => {
+        if (agroupList.length == 0) {
+            getAdGroupList({
+                name: localStorage.getItem('ID') as string,
+                agroupName: '',
             })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
+                .then((res) => {
+                    console.log('그룹리스트 조회 버튼 눌렀을 때');
+                    console.log(res.data);
+                    setAgroupList(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, []);
 
     //테이블 컬럼
     const columns: ColumnsType<AdGroupList> = [
@@ -80,7 +83,12 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             render: (value, record, index) => (
                 <Link
                     to={'/manageagroup'}
-                    state={{ agroupName: agroupList?.[index].agroupName }}
+                    state={{
+                        agroupName: agroupList?.[index].agroupName,
+                        agroupUseActYn: agroupList?.[index].agroupUseActYn,
+                        agroupRegTime: agroupList?.[index].regTime,
+                        agroupId: agroupList?.[index].key,
+                    }}
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
                     {agroupList?.[index].agroupName}
@@ -117,7 +125,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         console.log('--------------------------------------------');
         console.log(e.target.value);
         console.log('--------------------------------------------');
-        updateAgroupActYn({ name: e.target.value })
+        updateAgroupUseActYn({ name: e.target.value })
             .then((res) => {
                 console.log(res);
             })

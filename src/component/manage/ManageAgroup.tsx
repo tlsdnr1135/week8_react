@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { AdvInformation } from './managead/AdvInformation';
-import { AgroupSearch } from './managead/AgroupSearch';
-import { AgroupList } from './managead/agroupList';
 import { AgroupInformation } from './manageagroup/AgroupInformation';
 import { ItemSearh } from './manageagroup/ItemSearh';
 import { ItemList } from './manageagroup/ItemList';
-import { useLocation } from 'react-router-dom';
+import { ItemListDataType } from '../../DataType/ManageType';
 
 export const ManageAgroup = () => {
-    const location = useLocation();
-    // console.log(location.state.agroupName);
-    // console.log(location.state.agroupName);
+    const [itemList, setItemList] = useState<ItemListDataType[]>([]);
     return (
         <>
             <main className="ant-layout-content css-dev-only-do-not-override-1me4733">
@@ -21,8 +16,8 @@ export const ManageAgroup = () => {
                         </div>
                         <div className="content-body">
                             <AgroupInformation />
-                            <ItemSearh />
-                            <ItemList />
+                            <ItemSearh setItemList={setItemList} />
+                            <ItemList itemList={itemList!} setItemList={setItemList} />
                         </div>
                     </div>
                 </div>

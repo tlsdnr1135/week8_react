@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { Button, Input, Modal, Switch } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { AgroupAPIs } from '../../../api/AgroupAPIs';
+import moment from 'moment';
 
 export const AgroupInformation = () => {
     const location = useLocation();
-    const { updateAgroupName } = AgroupAPIs();
+    const { updateAgroupName, updateAgroupUseActYn } = AgroupAPIs(); //AgroupAPI
     const [agroupName, setAgroupname] = useState(location.state.agroupName);
     const [isModalOpen, setIsModalOpen] = useState(false); //광고그룹 이름 변경 모달
     const [input, setInput] = useState(''); //광고그룹 이름 변경 모달 인풋
+    const [agroupUseActYn, setAgroupUseActYn] = useState(location.state.agroupUseActYn);
 
     //모달 인풋
     const InputModalChange = (e: any) => {
@@ -37,6 +39,20 @@ export const AgroupInformation = () => {
                 });
         }
     };
+    //광고주 스위치
+    const agroupUseActYnSwitch = (e: any) => {
+        console.log(e);
+        updateAgroupUseActYn({ name: agroupName })
+            .then((res) => {
+                console.log(res.data);
+                setAgroupUseActYn(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        alert('변경 완료 되었습니다.');
+        // navigate('/manage');
+    };
 
     return (
         <>
@@ -52,7 +68,7 @@ export const AgroupInformation = () => {
                     <div className="tbl">
                         <dl>
                             <dt>
-                                <div className="dt-inner">
+                                <div className="dt-inner box-center">
                                     <span className="fz-15 fc-gray-500">그룹명</span>
                                 </div>
                             </dt>
@@ -83,7 +99,7 @@ export const AgroupInformation = () => {
                         </dl>
                         <dl>
                             <dt>
-                                <div className="dt-inner">
+                                <div className="dt-inner box-center">
                                     <span className="fz-15 fc-gray-500">그룹 ON/OFF</span>
                                 </div>
                             </dt>
@@ -93,7 +109,19 @@ export const AgroupInformation = () => {
                                         <span className="table">
                                             <span className="table-cell">
                                                 <b className="fz-14 fc-gray-400">
-                                                    {/*{adv?.balanceDesc}원*/}
+                                                    <Switch
+                                                        style={{
+                                                            color: 'blue',
+                                                            width: '100',
+                                                        }}
+                                                        onClick={agroupUseActYnSwitch}
+                                                        checkedChildren="ON"
+                                                        unCheckedChildren="OFF"
+                                                        checked={
+                                                            agroupUseActYn === 1 ? true : false
+                                                        }
+                                                        size={'small'}
+                                                    />
                                                 </b>
                                             </span>
                                         </span>
@@ -103,7 +131,7 @@ export const AgroupInformation = () => {
                         </dl>
                         <dl>
                             <dt>
-                                <div className="dt-inner">
+                                <div className="dt-inner box-center">
                                     <span className="fz-15 fc-gray-500">광고상품 수</span>
                                 </div>
                             </dt>
@@ -112,9 +140,16 @@ export const AgroupInformation = () => {
                                     <span className="comp-txt">
                                         <span className="table">
                                             <span className="table-cell">
-                                                <b className="fz-14 fc-gray-400">
-                                                    {/*{adv?.eventMoneyBalanceDesc}원*/}
-                                                </b>
+                                                <b className="fz-14 fc-gray-400">광고상품 수</b>
+                                                <Button
+                                                    type="primary"
+                                                    className="pink"
+                                                    size={'large'}
+                                                    value={'OK'}
+                                                    href={'/regad'}
+                                                >
+                                                    <span>그룹추가</span>
+                                                </Button>
                                             </span>
                                         </span>
                                     </span>
@@ -123,7 +158,7 @@ export const AgroupInformation = () => {
                         </dl>
                         <dl>
                             <dt>
-                                <div className="dt-inner">
+                                <div className="dt-inner box-center">
                                     <span className="fz-15 fc-gray-500">그룹 생성 시간</span>
                                 </div>
                             </dt>
@@ -133,7 +168,9 @@ export const AgroupInformation = () => {
                                         <span className="table">
                                             <span className="table-cell">
                                                 <b className="fz-14 fc-gray-400">
-                                                    {/*{adv?.statusBalance}*/}
+                                                    {moment(location.state.agroupRegTime).format(
+                                                        'YYYY.MM.DD HH:mm'
+                                                    )}
                                                 </b>
                                             </span>
                                         </span>
