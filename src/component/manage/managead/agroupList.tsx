@@ -70,8 +70,8 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
     const columns: ColumnsType<AdGroupList> = [
         {
             title: '번호',
-            dataIndex: 'agroupName',
-            key: 'agroupName',
+            dataIndex: 'key',
+            key: 'key1',
             align: 'center',
             render: (value, record, index) => <span>{index + 1}</span>,
         },
@@ -141,12 +141,8 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         onChange: (selectedRowKeys: React.Key[], selectedRows: AdGroupList[]) => {
             setCheckBoxList(selectedRowKeys);
             console.log(selectedRowKeys);
-            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
-        getCheckboxProps: (record: AdGroupList) => ({
-            disabled: record.agroupName === 'Disabled User', // Column configuration not to be checked
-            name: record.agroupName,
-        }),
     };
 
     //그룹 ON/OFF 일괄설정

@@ -41,13 +41,28 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         onChange: (selectedRowKeys: React.Key[], selectedRows: ItemListDataType[]) => {
             setCheckBoxList(selectedRowKeys);
             console.log(selectedRowKeys);
-            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
-        getCheckboxProps: (record: ItemListDataType) => ({
-            disabled: record.itemNo === 'Disabled User', // Column configuration not to be checked
-            name: record.itemNo,
-        }),
+        // getCheckboxProps: (record: ItemListDataType) => ({
+        //     disabled: record.itemName === 'Disabled User', // Column configuration not to be checked
+        //     name: record.itemName,
+        // }),
     };
+    //ItemTable의 광고 사용 활성 여부 일괄 변경
+    const itemListTableOnOffChangeAll = () => {
+        //체크버튼이 하나도 안 눌러져있으면!
+        if (checkBoxList.length == 0) {
+            console.log('sdsd');
+            alert('체크 박스를 먼저 골라주세요.');
+            return null;
+        }
+        console.log('리턴 널 체크');
+        //Api
+    };
+
+    //ItemTable의 광고 사용 활성 여부 변경
+    const itemListTableOnOffChange = () => {};
+
     //테이블 컬럼
     const columns: ColumnsType<ItemListDataType> = [
         {
@@ -73,8 +88,18 @@ export const ItemList = ({ itemList, setItemList }: props) => {
             title: '광고 상품 ON/OFF',
             key: 'action',
             align: 'center',
+            render: (value, record, index) => (
+                <button
+                    value={itemList?.[index].adId}
+                    onClick={itemListTableOnOffChange}
+                    style={{ color: 'dodgerblue', textDecoration: 'underline' }}
+                >
+                    {itemList?.[index].adUseConfigYn === 1 ? 'ON' : 'OFF'}
+                </button>
+            ),
         },
     ];
+
     return (
         <>
             <section className="wrap-section wrap-datagrid">
@@ -87,7 +112,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             type="primary"
                             className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray "
                             value={1}
-                            // onClick={agroupOnOffButton}
+                            onClick={itemListTableOnOffChangeAll}
                         >
                             <span>ON</span>
                         </Button>
@@ -96,7 +121,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             className="white "
                             size={'large'}
                             value={0}
-                            // onClick={agroupOnOffButton}
+                            onClick={itemListTableOnOffChangeAll}
                         >
                             <span>OFF</span>
                         </Button>
@@ -107,7 +132,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             value={'OK'}
                             // onClick={() => setIsModalOpen(true)}
                         >
-                            <span>그룹추가</span>
+                            <span>광고 상품 삭제</span>
                         </Button>
                         <Button
                             type="primary"
@@ -130,7 +155,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             //     }
                             // }}
                         >
-                            <span>그룹삭제</span>
+                            <span>광고 상품 다운로드</span>
                         </Button>
 
                         {/*<CSVLink*/}
