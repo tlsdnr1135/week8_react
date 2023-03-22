@@ -3,7 +3,6 @@ import { Login } from './pages/Login';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Adv from './pages/Adv';
 import useLoginStore from './store/useLoginStore';
-import { RegAd } from './pages/adv/RegAd';
 import { Manage } from './pages/adv/Manage';
 
 import { Sample } from './pages/admin/Sample';
