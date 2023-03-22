@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'antd';
-import { APIs } from '../../api/ApiService';
 import { DataType } from '../../DataType/RedAdType';
+import { ItemAPIs } from '../../api/ItemAPIs';
 
 interface ItemSelectParams {
     setLevels: React.Dispatch<React.SetStateAction<number>>;
@@ -9,7 +9,7 @@ interface ItemSelectParams {
 }
 
 export const ItemSearch = ({ setLevels, setDatas }: ItemSelectParams) => {
-    const { getItemList } = APIs();
+    const { getItemList } = ItemAPIs();
 
     const [itemNo, setItmeNo] = useState('');
     const [itemName, setItmeName] = useState('');
@@ -28,9 +28,9 @@ export const ItemSearch = ({ setLevels, setDatas }: ItemSelectParams) => {
 
         getItemList(parameter)
             .then((response) => {
-                const temp = response.data.items;
+                console.log(response.data);
+                const temp = response.data;
                 temp.forEach((item: DataType) => {
-                    item.key = item.id;
                     if (item.adultYn === 0) {
                         item.adultYn = 'NO';
                     } else {

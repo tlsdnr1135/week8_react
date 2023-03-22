@@ -14,6 +14,7 @@ export const AddAd = ({ keywordTables, picks, selectGroups }: AddAd) => {
     const { setAd } = APIs();
 
     const regAdEvent = () => {
+        console.log(picks.id);
         if (selectGroups.value === '광고그룹을 선택해주세요') {
             alert('광고그룹을 선택해주세요');
             return null;

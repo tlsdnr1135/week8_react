@@ -12,7 +12,7 @@ import { ManageAd } from './component/manage/ManageAd';
 import { ManageAgroup } from './component/manage/ManageAgroup';
 
 export const App = () => {
-    const { token, isLogined, role, setLogined } = useLoginStore();
+    const { role, setLogined } = useLoginStore();
 
     const gettoke = localStorage.getItem('ACCESS_TOKEN') as string;
     const userIsLoggedIn = !!gettoke;
@@ -36,8 +36,9 @@ export const App = () => {
                         <Route element={<Adv />}>
                             <Route path="/regad" element={<EnhencedRegAd />} />
                             <Route element={<Manage />}>
-                                <Route path="/manageagroup" element={<ManageAgroup />} />
                                 <Route path="/managead" element={<ManageAd />} />
+                                <Route path="/manageagroup" element={<ManageAgroup />} />
+                                {/*<Route path="/manage"*/}
                             </Route>
                             <Route path="/*" element={<Navigate replace to="/regad" />} />
                         </Route>

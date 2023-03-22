@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { useState } from 'react';
-import { KeyWordType } from '../pages/adv/RegAd';
+import React, { useState } from 'react';
+import { KeyWordType } from '../DataType/RedAdType';
 
 //헤더
-const API = axios.create({
+export const API = axios.create({
     baseURL: 'http://localhost:8080',
     headers: {
         ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
@@ -13,18 +13,6 @@ const API = axios.create({
 
 //헤더가 필요한 요청
 export const APIs = () => ({
-    //상품 조회
-    getItemList: (parameter: { itemNo: string; itemName: string }) =>
-        API.get('/api/item/find', {
-            params: {
-                itemnumber: parameter.itemNo,
-                itemname: parameter.itemName,
-            },
-        }),
-
-    //광고그룹 셀렉터 조회
-    getAgroupSelectBoxList: () => API.get('/api/agroup/find'),
-
     //광고 등록하기
     setAd: (parameter: {
         adv: { name: string };
