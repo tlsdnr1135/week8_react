@@ -30,6 +30,13 @@ export interface AgroupListCsv {
     agroupUseActYn: string | number; //그룹 ON/OFF(On,Off)
     itemCount: number | string; //상품 수.
 }
+//CSV
+export interface ItemListCsv {
+    key: number; //번호
+    itemNo: string; //그룹이름
+    itemName: string | number; //그룹 ON/OFF(On,Off)
+    adUseConfigYn: number | string; //상품 수.
+}
 
 //ItemList
 export interface ItemListDataType {
@@ -40,5 +47,17 @@ export interface ItemListDataType {
     itemNo: string; //아이템 번호
     itemOrgCost: number; //상품 원본 금액
     adUseConfigYn: number; //광고 사용 활성 여부
+    adActYn: number; //광고 활성 여부
     adId: number; //광고 아이디
+}
+//keywordList
+export interface KeywordListDataType {
+    key: number;
+    kwdName: string;
+    manualCnrKwdYn: number;
+    sellPossKwdYn: number;
+    adId: number;
+    dadDetId: number;
+    dadActYn: number;
+    dadUseConfigYn: number;
 }

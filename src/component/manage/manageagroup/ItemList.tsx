@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { AdGroupList, ItemListDataType } from '../../../DataType/ManageType';
+import {
+    AdGroupList,
+    AgroupListCsv,
+    ItemListCsv,
+    ItemListDataType,
+} from '../../../DataType/ManageType';
 import { Button, PaginationProps, Table } from 'antd';
 import { CSVLink } from 'react-csv';
 import { ColumnsType } from 'antd/es/table';
 import { Link, useLocation } from 'react-router-dom';
 import { ItemAPIs } from '../../../api/ItemAPIs';
+import { AdAPIs } from '../../../api/AdAPIs';
 
 interface props {
     itemList: ItemListDataType[];
@@ -13,8 +19,10 @@ interface props {
 export const ItemList = ({ itemList, setItemList }: props) => {
     const location = useLocation();
     const { getItemListJoinAdWhereItemNameAndItemNo } = ItemAPIs(); //AgroupAPI
+    const { updateAdOnOff, updateAdDeleteButton } = AdAPIs(); //AdApi
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
-    const [checkBoxList, setCheckBoxList] = useState<React.Key[]>([]); //체크박스 리스트
+    const [checkBoxList, setCheckBoxList] = useState<number[]>([]); //체크박스 리스트
+    const [csv, setCsv] = useState<ItemListCsv[]>([]); //csv Data
 
     //초기 세팅 -> 유즈 이펙트
     useEffect(() => {
@@ -36,32 +44,103 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         }
     }, []);
 
+    //csv
+    const headers = [
+        { label: '번호', key: 'key' },
+        { label: '상품번호', key: 'itemNo' },
+        { label: '상품명', key: 'itemName' },
+        { label: '광고 상품 ON/OFF', key: 'adUseConfigYn' },
+    ];
+
+    //csvDataHandle
+    const CsvOnClickHandle = () => {
+        let CsvData: ItemListCsv[];
+        CsvData = itemList.map((item) => ({
+            key: 0,
+            itemNo: item.itemNo,
+            itemName: item.itemName,
+            adUseConfigYn: item.adUseConfigYn,
+            // itemCount: 0,
+        }));
+        let index = 1;
+        CsvData.forEach((item) => {
+            item.key = index;
+            item.adUseConfigYn = item.adUseConfigYn === 1 ? 'ON' : 'OFF';
+            index += 1;
+        });
+        setCsv(CsvData);
+    };
+
     //테이블 체크박스
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: ItemListDataType[]) => {
-            setCheckBoxList(selectedRowKeys);
+            let temp: number[] = [];
+            selectedRows.forEach((item) => {
+                temp.push(item.adId as number);
+            });
+            setCheckBoxList(temp);
             console.log(selectedRowKeys);
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
-        // getCheckboxProps: (record: ItemListDataType) => ({
-        //     disabled: record.itemName === 'Disabled User', // Column configuration not to be checked
-        //     name: record.itemName,
-        // }),
     };
     //ItemTable의 광고 사용 활성 여부 일괄 변경
-    const itemListTableOnOffChangeAll = () => {
+    const itemListTableOnOffChangeAll = (e: any) => {
+        console.log(e.target.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            console.log('sdsd');
             alert('체크 박스를 먼저 골라주세요.');
             return null;
         }
         console.log('리턴 널 체크');
         //Api
+        updateAdOnOff({ idList: checkBoxList, yn: e.target.value })
+            .then((res) => {
+                console.log(res);
+                alert('광고 상품 상태가 변경되었습니다.');
+                window.location.replace('/manageagroup');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    //ItemTable의 광고 사용 활성 여부 변경
-    const itemListTableOnOffChange = () => {};
+    //ItemTable의 광고 상품 삭제
+    const deleteAdUseConfigYn = (e: any) => {
+        console.log(e.target.value);
+        //체크버튼이 하나도 안 눌러져있으면!
+        if (checkBoxList.length == 0) {
+            alert('체크 박스를 먼저 골라주세요.');
+            return null;
+        }
+        console.log('리턴 널 체크');
+
+        //Api
+        updateAdDeleteButton({ idList: checkBoxList, yn: e.target.value })
+            .then((res) => {
+                console.log(res);
+                alert('광고 상품 상태가 되었습니다.');
+                window.location.replace('/manageagroup');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    //ItemTable의 광고 사용 활성 여부 변경 On/Off (버튼x)
+    const itemListTableOnOffChange = (e: any) => {
+        console.log(e.target.value);
+        let temp: number[] = [];
+        temp.push(itemList?.[e.target.value].adId);
+        updateAdOnOff({ idList: temp, yn: itemList?.[e.target.value].adUseConfigYn == 1 ? 0 : 1 })
+            .then((res) => {
+                console.log(res);
+                alert('그룹 사용이 변경되었습니다.');
+                window.location.replace('/manageagroup');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     //테이블 컬럼
     const columns: ColumnsType<ItemListDataType> = [
@@ -77,6 +156,17 @@ export const ItemList = ({ itemList, setItemList }: props) => {
             key: 'itemNo',
             dataIndex: 'itemNo',
             align: 'center',
+            render: (value, record, index) => (
+                <Link
+                    to={'/manageitem'}
+                    state={{
+                        adId: itemList?.[index].adId,
+                    }}
+                    style={{ color: 'blue', textDecoration: 'underline' }}
+                >
+                    {itemList?.[index].itemNo}
+                </Link>
+            ),
         },
         {
             title: '상품명',
@@ -90,7 +180,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
             align: 'center',
             render: (value, record, index) => (
                 <button
-                    value={itemList?.[index].adId}
+                    value={index}
                     onClick={itemListTableOnOffChange}
                     style={{ color: 'dodgerblue', textDecoration: 'underline' }}
                 >
@@ -129,50 +219,29 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             type="primary"
                             className="gray"
                             size={'large'}
-                            value={'OK'}
-                            // onClick={() => setIsModalOpen(true)}
+                            value={0}
+                            onClick={deleteAdUseConfigYn}
                         >
                             <span>광고 상품 삭제</span>
                         </Button>
+
                         <Button
                             type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg white "
+                            className="white"
+                            size={'large'}
                             value={'CANCEL'}
-                            // onClick={() => {
-                            //     //이거 밖으로
-                            //     if (checkBoxList.length == 0) {
-                            //         alert('체크리스트를 선택해 주십시오');
-                            //     } else {
-                            //         deleteAgroupActYn({ idList: checkBoxList })
-                            //             .then((res) => {
-                            //                 console.log(res);
-                            //             })
-                            //             .catch((err) => {
-                            //                 console.log(err);
-                            //             });
-                            //         alert('삭제 되었습니다.');
-                            //         window.location.replace('/managead');
-                            //     }
-                            // }}
+                            onClick={CsvOnClickHandle}
                         >
-                            <span>광고 상품 다운로드</span>
+                            {' '}
+                            <CSVLink
+                                data={csv}
+                                headers={headers}
+                                // onClick={CsvOnClickHandle}
+                                filename={`Test`}
+                            >
+                                <span>광고 상품 다운로드</span>
+                            </CSVLink>
                         </Button>
-
-                        {/*<CSVLink*/}
-                        {/*    data={csv}*/}
-                        {/*    headers={headers}*/}
-                        {/*    onClick={CsvOnClickHandle}*/}
-                        {/*    filename={`Test`}*/}
-                        {/*>*/}
-                        {/*    <Button*/}
-                        {/*        type="primary"*/}
-                        {/*        className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray "*/}
-                        {/*        value={'CANCEL'}*/}
-                        {/*        // onClick={CsvOnClickHandle}*/}
-                        {/*    >*/}
-                        {/*        <span>다운로드</span>*/}
-                        {/*    </Button>*/}
-                        {/*</CSVLink>*/}
                     </div>
                 </div>
 

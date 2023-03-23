@@ -10,6 +10,7 @@ import { EnhencedRegAd } from './pages/adv/EnhencedRegAd';
 import { Admin } from './pages/Admin';
 import { ManageAd } from './component/manage/ManageAd';
 import { ManageAgroup } from './component/manage/ManageAgroup';
+import { ManageItem } from './component/manage/ManageItem';
 
 export const App = () => {
     const { role, setLogined } = useLoginStore();
@@ -38,6 +39,7 @@ export const App = () => {
                             <Route element={<Manage />}>
                                 <Route path="/managead" element={<ManageAd />} />
                                 <Route path="/manageagroup" element={<ManageAgroup />} />
+                                <Route path="/manageitem" element={<ManageItem />} />
                                 {/*<Route path="/manage"*/}
                             </Route>
                             <Route path="/*" element={<Navigate replace to="/regad" />} />

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Input, Modal, Switch } from 'antd';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AgroupAPIs } from '../../../api/AgroupAPIs';
 import moment from 'moment';
 
 export const AgroupInformation = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const { updateAgroupName, updateAgroupUseActYn } = AgroupAPIs(); //AgroupAPI
     const [agroupName, setAgroupname] = useState(location.state.agroupName);
@@ -141,15 +142,20 @@ export const AgroupInformation = () => {
                                         <span className="table">
                                             <span className="table-cell">
                                                 <b className="fz-14 fc-gray-400">광고상품 수</b>
-                                                <Button
-                                                    type="primary"
-                                                    className="pink"
-                                                    size={'large'}
-                                                    value={'OK'}
-                                                    href={'/regad'}
-                                                >
-                                                    <span>그룹추가</span>
-                                                </Button>
+                                                <b className="fz-14 fc-gray-400">
+                                                    <Button
+                                                        type="primary"
+                                                        className="pink"
+                                                        size={'large'}
+                                                        value={'OK'}
+                                                        // href={'/regad'}
+                                                        onClick={() => {
+                                                            navigate('/regad');
+                                                        }}
+                                                    >
+                                                        <span>그룹추가</span>
+                                                    </Button>
+                                                </b>
                                             </span>
                                         </span>
                                     </span>
