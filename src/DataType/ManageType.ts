@@ -37,7 +37,12 @@ export interface ItemListCsv {
     itemName: string | number; //그룹 ON/OFF(On,Off)
     adUseConfigYn: number | string; //상품 수.
 }
-
+//CSV
+export interface KeywordListCsv {
+    key: number; //번호
+    kwdName: string; //그룹이름
+    dadUseConfigYn: string | number; //그룹 ON/OFF(On,Off)
+}
 //ItemList
 export interface ItemListDataType {
     key: number; //번호
@@ -59,5 +64,5 @@ export interface KeywordListDataType {
     adId: number;
     dadDetId: number;
     dadActYn: number;
-    dadUseConfigYn: number;
+    dadUseConfigYn: number | string;
 }

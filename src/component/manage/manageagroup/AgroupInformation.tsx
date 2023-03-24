@@ -16,16 +16,25 @@ export const AgroupInformation = () => {
     //모달 인풋
     const InputModalChange = (e: any) => {
         console.log('InputModalChange', e.target.value);
+        if (e.target.value == 1) {
+            alert('sdsdsd');
+        }
         setInput(e.target.value);
     };
     //등록 모달
     const modalHandle = (e: any) => {
         let temp = true;
+        const emailRegEx = /^([0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝|-])/;
+
         if (e.target.value === 'CANCEL') {
             console.log('취소됐엉');
             setInput('');
             setIsModalOpen(false);
         } else if (e.target.value === 'OK') {
+            if (!emailRegEx.test(input)) {
+                alert('특수 문자나 공백은 사용할 수 없습니다.');
+                return;
+            }
             console.log(agroupName);
             updateAgroupName({ beforeAgroupName: agroupName, afterAgroupName: input })
                 .then((res) => {
@@ -61,7 +70,9 @@ export const AgroupInformation = () => {
                 <div className="box-header">
                     <div className="box-left">
                         <div className="box-left">
-                            <h2 className="fz-24 fc-gray-700">신발그룹 설정 및 정보</h2>
+                            <h2 className="fz-24 fc-gray-700">
+                                {location.state.agroupName} 설정 및 정보
+                            </h2>
                         </div>
                     </div>
                 </div>

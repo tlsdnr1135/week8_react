@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, PaginationProps, Table } from 'antd';
 import { CSVLink } from 'react-csv';
-import { ItemListDataType, KeywordListDataType } from '../../../DataType/ManageType';
+import {
+    AgroupListCsv,
+    ItemListDataType,
+    KeywordListCsv,
+    KeywordListDataType,
+} from '../../../DataType/ManageType';
 import { ColumnsType } from 'antd/es/table';
 import { Link, useLocation } from 'react-router-dom';
 import { KeyWordAPIs } from '../../../api/KeyWordAPIs';
@@ -12,9 +17,14 @@ interface props {
 }
 export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
     const location = useLocation();
-    const { getkeywordListJoinDadDetFind, updateDadUseConfigYnOnOffAll } = KeyWordAPIs();
+    const {
+        getkeywordListJoinDadDetFind,
+        updateDadUseConfigYnOnOffAll,
+        updateDaddetActYnDeleteButton,
+    } = KeyWordAPIs(); //API
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [checkBoxList, setCheckBoxList] = useState<number[]>([]); //체크박스 리스트
+    const [csv, setCsv] = useState<KeywordListCsv[]>([]); //csv Data
 
     //초기값 세팅
     useEffect(() => {
@@ -30,6 +40,29 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         }
     }, []);
 
+    //csv
+    const headers = [
+        { label: '번호', key: 'key' },
+        { label: '키워드', key: 'kwdName' },
+        { label: 'ON/OFF', key: 'dadUseConfigYn' },
+    ];
+    //csvDataHandle
+    const CsvOnClickHandle = () => {
+        let CsvData: KeywordListCsv[];
+        CsvData = keywordList.map((item) => ({
+            key: 0,
+            kwdName: item.kwdName,
+            dadUseConfigYn: item.dadUseConfigYn,
+        }));
+        let index = 1;
+        CsvData.forEach((item) => {
+            item.key = index;
+            item.dadUseConfigYn = item.dadUseConfigYn === 1 ? 'ON' : 'OFF';
+            index += 1;
+        });
+        setCsv(CsvData);
+    };
+
     //keywordTable의 On/Off 버튼
     const keywordListTableOnOffChangeAll = (e: any) => {
         console.log(e.target.value);
@@ -40,11 +73,60 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         }
         console.log('리턴 널 체크');
         //Api
+        console.log('체크박스', checkBoxList);
         updateDadUseConfigYnOnOffAll({ idList: checkBoxList, yn: e.target.value })
             .then((res) => {
                 console.log(res);
                 alert('키워드 상태가 변경되었습니다.');
-                window.location.replace('/manageagroup');
+                window.location.replace('/manageitem');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    //keywordTable의 delete 버튼
+    const deleteDaddetActYnButton = (e: any) => {
+        console.log(e.target.value);
+        //체크버튼이 하나도 안 눌러져있으면!
+        if (checkBoxList.length == 0) {
+            alert('체크 박스를 먼저 골라주세요.');
+            return null;
+        }
+        console.log('리턴 널 체크');
+        console.log(checkBoxList);
+
+        //Api
+        updateDaddetActYnDeleteButton({ idList: checkBoxList })
+            .then((res) => {
+                console.log(res);
+                alert('광고 상품 상태가 되었습니다.');
+                window.location.replace('/manageitem');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    //keywordTable의 OnOff 단일 변경
+    const updateOnOffOne = (e: any) => {
+        console.log(e.target.value); //index
+        let temp: number[] = [];
+        temp.push(keywordList[e.target.value].dadDetId);
+
+        let yn = keywordList[e.target.value].dadUseConfigYn as number;
+        if (yn === 1) {
+            yn = 0;
+        } else {
+            yn = 1;
+        }
+
+        updateDadUseConfigYnOnOffAll({
+            idList: temp,
+            yn: yn,
+        })
+            .then((res) => {
+                console.log(res);
+                alert('변경이 완료되엇습니다');
+                window.location.replace('/manageitem');
             })
             .catch((err) => {
                 console.log(err);
@@ -86,7 +168,8 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
             render: (value, record, index) => (
                 <button
                     value={index}
-                    // onClick={itemListTableOnOffChange}
+                    key={value}
+                    onClick={updateOnOffOne}
                     style={{ color: 'dodgerblue', textDecoration: 'underline' }}
                 >
                     {keywordList?.[index].dadUseConfigYn === 1 ? 'ON' : 'OFF'}
@@ -99,7 +182,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
             <section className="wrap-section wrap-datagrid">
                 <div className="box-header">
                     <div className="box-left">
-                        <h2 className="fz-24 fc-gray-700">상품 조회 결과</h2>
+                        <h2 className="fz-24 fc-gray-700">키워드 리스트</h2>
                     </div>
                     <div className="box-right">
                         <Button
@@ -124,27 +207,26 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
                             className="gray"
                             size={'large'}
                             value={0}
-                            // onClick={deleteAdUseConfigYn}
+                            onClick={deleteDaddetActYnButton}
                         >
                             <span>키워드 삭제</span>
                         </Button>
-
-                        <Button
-                            type="primary"
-                            className="white"
-                            size={'large'}
-                            value={'CANCEL'}
-                            // onClick={CsvOnClickHandle}
+                        <CSVLink
+                            data={csv}
+                            headers={headers}
+                            onClick={CsvOnClickHandle}
+                            filename={`Test`}
                         >
-                            {/*<CSVLink*/}
-                            {/*    data={csv}*/}
-                            {/*    headers={headers}*/}
-                            {/*    // onClick={CsvOnClickHandle}*/}
-                            {/*    filename={`Test`}*/}
-                            {/*>*/}
-                            {/*    <span>광고 상품 다운로드</span>*/}
-                            {/*</CSVLink>*/}
-                        </Button>
+                            <Button
+                                type="primary"
+                                className="white"
+                                size={'large'}
+                                value={'CANCEL'}
+                                // onClick={CsvOnClickHandle}
+                            >
+                                <span>광고 상품 다운로드</span>
+                            </Button>
+                        </CSVLink>
                     </div>
                 </div>
 

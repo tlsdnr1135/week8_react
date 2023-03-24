@@ -12,8 +12,6 @@ export const AdvInformation = () => {
     useEffect(() => {
         //초기 API세팅
         if (adv === undefined) {
-            console.log('adv');
-            console.log(adv);
             getAdv({ name: localStorage.getItem('ID') as string })
                 .then((res) => {
                     console.log(res);
@@ -259,7 +257,7 @@ export const AdvInformation = () => {
             {/******************************************************************************************************/}
             <Modal
                 className="ant-modal-content"
-                title="신규 광고 그룹 생성"
+                title="일일 허용 예산 설정"
                 width={800}
                 open={isModalOpen}
                 // onOk={handleOk}
@@ -292,7 +290,7 @@ export const AdvInformation = () => {
                                 <dt>
                                     <div className="dt-inner">
                                         <span className="fz-16 fw-med fc-7">
-                                            신규 광고그룹 명<i className="txt-essential"></i>
+                                            일일 허용 예산<i className="txt-essential"></i>
                                         </span>
                                     </div>
                                 </dt>
@@ -307,6 +305,7 @@ export const AdvInformation = () => {
                                                 width: '300px',
                                             }}
                                         />
+                                        원
                                     </div>
                                 </dd>
                             </dl>

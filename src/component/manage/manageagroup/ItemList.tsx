@@ -161,6 +161,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                     to={'/manageitem'}
                     state={{
                         adId: itemList?.[index].adId,
+                        // agroupName: itemList?.[index].a,
                     }}
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
@@ -225,23 +226,23 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                             <span>광고 상품 삭제</span>
                         </Button>
 
-                        <Button
-                            type="primary"
-                            className="white"
-                            size={'large'}
-                            value={'CANCEL'}
-                            onClick={CsvOnClickHandle}
+                        <CSVLink
+                            data={csv}
+                            headers={headers}
+                            // onClick={CsvOnClickHandle}
+                            filename={`Test`}
                         >
-                            {' '}
-                            <CSVLink
-                                data={csv}
-                                headers={headers}
-                                // onClick={CsvOnClickHandle}
-                                filename={`Test`}
+                            <Button
+                                type="primary"
+                                className="white"
+                                size={'large'}
+                                value={'CANCEL'}
+                                onClick={CsvOnClickHandle}
                             >
+                                {' '}
                                 <span>광고 상품 다운로드</span>
-                            </CSVLink>
-                        </Button>
+                            </Button>
+                        </CSVLink>
                     </div>
                 </div>
 

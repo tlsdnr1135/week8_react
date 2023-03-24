@@ -31,7 +31,7 @@ export const ItemKeywordSearch = ({ setKeywordList }: props) => {
                 <div className="box-header">
                     <div className="box-left">
                         <div className="box-left">
-                            <h2 className="fz-24 fc-gray-700">상품 검색</h2>
+                            <h2 className="fz-24 fc-gray-700">키워드 검색</h2>
                         </div>
                     </div>
                 </div>

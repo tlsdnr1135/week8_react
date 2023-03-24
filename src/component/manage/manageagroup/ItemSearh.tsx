@@ -21,7 +21,7 @@ export const ItemSearh = ({ setItemList }: props) => {
         setItemNoInput(e.target.value);
     };
     const itemListSearchButton = () => {
-        console.log('sssssssssssssssssssssssssssssssssssssssss');
+        console.log('itemListSearchButton');
         getItemListJoinAdWhereItemNameAndItemNo({
             itemName: itemNameInput,
             itemNo: itemNoInput,

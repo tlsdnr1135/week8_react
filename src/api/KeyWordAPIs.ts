@@ -18,4 +18,16 @@ export const KeyWordAPIs = () => ({
             longList: parameter.idList,
             yn: parameter.yn,
         }),
+
+    //Delete버튼(DaddetActYn)
+    updateDaddetActYnDeleteButton: (parameter: { idList: number[] }) =>
+        API.put('/api/daddet/update/daddetactyn', {
+            longList: parameter.idList,
+        }),
+    //On/Off a링크
+    // updateDadUseConfigYnOnOff: (parameter: { daddetId: number; yn: number }) =>
+    //     API.put('/api/daddet/update/daduseconfigynone', {
+    //         daddetId: parameter.daddetId,
+    //         yn: parameter.yn,
+    //     }),
 });
