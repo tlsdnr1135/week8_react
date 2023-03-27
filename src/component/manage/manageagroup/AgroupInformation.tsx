@@ -12,15 +12,19 @@ export const AgroupInformation = () => {
     // const [agroupName, setAgroupname] = useState(location.state.agroupName);
     const [isModalOpen, setIsModalOpen] = useState(false); //광고그룹 이름 변경 모달
     const [input, setInput] = useState(''); //광고그룹 이름 변경 모달 인풋
-    const [agroupUseActYn, setAgroupUseActYn] = useState(location.state.agroupUseActYn);
+    const [agroupUseActYn, setAgroupUseActYn] = useState<number>(); //스위치
     const [agroup, setAgroup] = useState<AdGroupList>();
 
+    //초기 그룹관리 세팅
     useEffect(() => {
         console.log(location.state.agroupId);
         getAgroupDetails({ agroupId: location.state.agroupId })
             .then((res) => {
-                console.log(res);
+                console.log('초기화 데이터');
+                console.log(res.data);
+                let temp = res.data;
                 setAgroup(res.data);
+                setAgroupUseActYn(res.data?.agroupUseActYn as number);
             })
             .catch((err) => {
                 console.log(err);
@@ -39,13 +43,12 @@ export const AgroupInformation = () => {
     //등록 모달
     const modalHandle = (e: any) => {
         let temp = true;
-        const emailRegEx = /^([0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝|-])/;
-
         if (e.target.value === 'CANCEL') {
             console.log('취소됐엉');
             setInput('');
             setIsModalOpen(false);
         } else if (e.target.value === 'OK') {
+            const emailRegEx = /^([0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝|-])/;
             if (!emailRegEx.test(input)) {
                 alert('특수 문자나 공백은 사용할 수 없습니다.');
                 return;
@@ -54,28 +57,31 @@ export const AgroupInformation = () => {
             updateAgroupName({ beforeAgroupName: agroup?.agroupName!, afterAgroupName: input })
                 .then((res) => {
                     console.log(res.data);
-                    setAgroupname(res.data);
-                    alert('변경되었습니다.');
+                    agroup!.agroupName = res.data as string;
+                    setAgroup(agroup);
+                    Modal.info({ content: '성공적으로 변했습니다' });
+                    setIsModalOpen(false);
                 })
                 .catch((err) => {
                     console.log(err);
-                    alert('이미 존재하는 아이디 입니다.');
+                    Modal.info({ content: '이미 존재하는 아이디 입니다' });
                 });
         }
     };
     //광고주 스위치
     const agroupUseActYnSwitch = (e: any) => {
         console.log(e);
-        updateAgroupUseActYn({ agroupUseActYn: agroup?.agroupName! })
+        updateAgroupUseActYn({ agroupName: agroup?.agroupName! })
             .then((res) => {
+                console.log('sdsdsdsdsddsds');
                 console.log(res.data);
                 setAgroupUseActYn(res.data);
+                Modal.info({ content: '변경 완료 되었습니다.' });
             })
             .catch((err) => {
                 console.log(err);
+                Modal.error({ content: '오류가 낫습니당' });
             });
-        alert('변경 완료 되었습니다.');
-        // navigate('/manage');
     };
 
     return (
@@ -166,7 +172,9 @@ export const AgroupInformation = () => {
                                     <span className="comp-txt">
                                         <span className="table">
                                             <span className="table-cell">
-                                                <b className="fz-14 fc-gray-400">광고상품 수</b>
+                                                <b className="fz-14 fc-gray-400">
+                                                    {agroup?.adActYn}개
+                                                </b>
                                                 <b className="fz-14 fc-gray-400">
                                                     <Button
                                                         type="primary"
@@ -175,7 +183,7 @@ export const AgroupInformation = () => {
                                                         value={'OK'}
                                                         // href={'/regad'}
                                                         onClick={() => {
-                                                            navigate('/regad');
+                                                            window.location.replace('/regad');
                                                         }}
                                                     >
                                                         <span>그룹추가</span>

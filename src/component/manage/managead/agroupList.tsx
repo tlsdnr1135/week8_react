@@ -125,12 +125,14 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             ),
         },
     ];
-    const AgroupListTableOnOffChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const AgroupListTableOnOffChange: React.MouseEventHandler<HTMLButtonElement> = (
+        e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+    ) => {
         console.log(e);
         console.log('--------------------------------------------');
         console.log(e.currentTarget.value);
         console.log('--------------------------------------------');
-        updateAgroupUseActYn({ agroupUseActYn: e.currentTarget.value })
+        updateAgroupUseActYn({ agroupName: e.currentTarget.value })
             .then((res) => {
                 console.log(res);
             })
@@ -155,7 +157,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
     //그룹 ON/OFF 일괄설정
     // const agroupOnOffButton = (e: React.MouseEventHandler<HTMLButtonElement>) => {
     const agroupOnOffButton = (e: any) => {
-        console.log(e);
+        console.log(e.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
             Modal.warning({
@@ -163,33 +165,33 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             });
             return null;
         }
-        getAgroupOnOff({ idList: checkBoxList, yn: parseInt(e.target.value) })
-            .then((res) => {
-                console.log(res);
-                //2중 포문
-                let temp = agroupList!;
-                temp.forEach((item) => {
-                    checkBoxList.forEach((arr) => {
-                        if (item.key === arr) {
-                            console.log('item.agroupUseActYn', item.agroupUseActYn);
-                            console.log('e.target.value', e.target.value);
-                            item.agroupUseActYn = parseInt(e.target.value);
-                            console.log('일리와');
-                        }
-                    });
-                });
-                console.log(temp[0]);
-                setAgroupList([...temp!]);
-                Modal.info({
-                    content: '성공!',
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-                Modal.error({
-                    content: '시일이일패!',
-                });
-            });
+        // getAgroupOnOff({ idList: checkBoxList, yn: parseInt(e.currentTarget.value) })
+        //     .then((res) => {
+        //         console.log(res);
+        //         //2중 포문
+        //         let temp = agroupList!;
+        //         temp.forEach((item) => {
+        //             checkBoxList.forEach((arr) => {
+        //                 if (item.key === arr) {
+        //                     console.log('item.agroupUseActYn', item.agroupUseActYn);
+        //                     console.log('e.target.value', e.currentTarget.value);
+        //                     item.agroupUseActYn = parseInt(e.currentTarget.value);
+        //                     console.log('일리와');
+        //                 }
+        //             });
+        //         });
+        //         console.log(temp[0]);
+        //         setAgroupList([...temp!]);
+        //         Modal.info({
+        //             content: '성공!',
+        //         });
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //         Modal.error({
+        //             content: '시일이일패!',
+        //         });
+        //     });
     };
     /* ******************************************************************************************************* */
     /* ******************************************************************************************************* */

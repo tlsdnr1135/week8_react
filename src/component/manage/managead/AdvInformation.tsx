@@ -63,39 +63,43 @@ export const AdvInformation = () => {
             });
     };
     //모달
-    const modalHandle = (e: React.BaseSyntheticEvent<EventTarget>) => {
+    const modalHandle: React.MouseEventHandler<HTMLAnchorElement> = (
+        e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+    ) => {
         //이거 고쳐야함 --------------------------------------------------------------------------------------------
-        if (e.target.value === 'CANCEL') {
-            setInput('');
-        } else {
-            let cost = parseInt(input);
-            //100원 단위가 아닐경우
-            if (cost % 100 != 0) {
-                Modal.error({
-                    content: '100원 단위로 입력해주세요',
-                });
-                return null;
-            }
-            //API
-            updateAdvDayLimitBudget({
-                name: localStorage.getItem('ID') as string,
-                dayLimitBudget: cost,
-            })
-                .then((res) => {
-                    setInput('');
-                    const temp = adv;
-                    temp!.dayLimitBudget = cost;
-                    procAdvMngType(temp!);
-                    setAdv({ ...temp! });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+        // if ('sd' === 'CANCEL') {
+        //     setInput('');
+        // } else {
+        //     let cost = parseInt(input);
+        //     //100원 단위가 아닐경우
+        //     if (cost % 100 != 0) {
+        //         Modal.error({
+        //             content: '100원 단위로 입력해주세요',
+        //         });
+        //         return null;
+        //     }
+        //     //API
+        //     updateAdvDayLimitBudget({
+        //         name: localStorage.getItem('ID') as string,
+        //         dayLimitBudget: cost,
+        //     })
+        //         .then((res) => {
+        //             setInput('');
+        //             const temp = adv;
+        //             temp!.dayLimitBudget = cost;
+        //             procAdvMngType(temp!);
+        //             setAdv({ ...temp! });
+        //         })
+        //         .catch((err) => {
+        //             console.log(err);
+        //         });
+        // }
         setIsModalOpen(false);
     };
     //모달 인풋
-    const InputModalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const InputModalChange: ChangeEventHandler<HTMLInputElement> = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         console.log('InputModalChange', e.target.value);
         setInput(e.currentTarget.value);
     };

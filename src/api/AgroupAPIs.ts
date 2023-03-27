@@ -32,9 +32,9 @@ export const AgroupAPIs = () => ({
         }),
 
     //광고그룹 사용 설정 여부(agroupUseActYn)변경
-    updateAgroupUseActYn: (parameter: { agroupUseActYn: string }) =>
+    updateAgroupUseActYn: (parameter: { agroupName: string }) =>
         API.put('/api/agroup/update/agroupuseactyn', {
-            agroupName: parameter.agroupUseActYn,
+            agroupName: parameter.agroupName,
         }),
 
     //광고그룹 이름 변경하기(AgroupName)
