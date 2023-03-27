@@ -1,21 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, Switch } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AgroupAPIs } from '../../../api/AgroupAPIs';
 import moment from 'moment';
+import { AdGroupList } from '../../../DataType/ManageType';
 
 export const AgroupInformation = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { updateAgroupName, updateAgroupUseActYn } = AgroupAPIs(); //AgroupAPI
-    const [agroupName, setAgroupname] = useState(location.state.agroupName);
+    const { updateAgroupName, updateAgroupUseActYn, getAgroupDetails } = AgroupAPIs(); //AgroupAPI
+    // const [agroupName, setAgroupname] = useState(location.state.agroupName);
     const [isModalOpen, setIsModalOpen] = useState(false); //광고그룹 이름 변경 모달
     const [input, setInput] = useState(''); //광고그룹 이름 변경 모달 인풋
     const [agroupUseActYn, setAgroupUseActYn] = useState(location.state.agroupUseActYn);
+    const [agroup, setAgroup] = useState<AdGroupList>();
+
+    useEffect(() => {
+        console.log(location.state.agroupId);
+        getAgroupDetails({ agroupId: location.state.agroupId })
+            .then((res) => {
+                console.log(res);
+                setAgroup(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     //모달 인풋
     const InputModalChange = (e: any) => {
         console.log('InputModalChange', e.target.value);
+        console.log('파악하려고', e);
         if (e.target.value == 1) {
             alert('sdsdsd');
         }
@@ -35,12 +50,11 @@ export const AgroupInformation = () => {
                 alert('특수 문자나 공백은 사용할 수 없습니다.');
                 return;
             }
-            console.log(agroupName);
-            updateAgroupName({ beforeAgroupName: agroupName, afterAgroupName: input })
+            console.log(agroup?.agroupName);
+            updateAgroupName({ beforeAgroupName: agroup?.agroupName!, afterAgroupName: input })
                 .then((res) => {
                     console.log(res.data);
                     setAgroupname(res.data);
-                    window.location.replace('/manageagroup');
                     alert('변경되었습니다.');
                 })
                 .catch((err) => {
@@ -52,7 +66,7 @@ export const AgroupInformation = () => {
     //광고주 스위치
     const agroupUseActYnSwitch = (e: any) => {
         console.log(e);
-        updateAgroupUseActYn({ name: agroupName })
+        updateAgroupUseActYn({ agroupUseActYn: agroup?.agroupName! })
             .then((res) => {
                 console.log(res.data);
                 setAgroupUseActYn(res.data);
@@ -70,9 +84,7 @@ export const AgroupInformation = () => {
                 <div className="box-header">
                     <div className="box-left">
                         <div className="box-left">
-                            <h2 className="fz-24 fc-gray-700">
-                                {location.state.agroupName} 설정 및 정보
-                            </h2>
+                            <h2 className="fz-24 fc-gray-700">{agroup?.agroupName} 설정 및 정보</h2>
                         </div>
                     </div>
                 </div>
@@ -89,7 +101,9 @@ export const AgroupInformation = () => {
                                     <span className="comp-txt">
                                         <span className="table">
                                             <span className="table-cell">
-                                                <b className="fz-14 fc-gray-400">{agroupName}</b>
+                                                <b className="fz-14 fc-gray-400">
+                                                    {agroup?.agroupName}
+                                                </b>
                                                 <b className="fz-14 fc-gray-400">
                                                     <Button
                                                         type="primary"

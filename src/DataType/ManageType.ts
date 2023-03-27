@@ -6,16 +6,17 @@ export interface AdvMngType {
     eventMoneyBalance: number; //이벤트 머니 잔액
     dayLimitBudget: number; //일 제한 예산
     //*********************************************
-    balanceDesc: string; //잔액
-    eventMoneyBalanceDesc: string; //이벤트 머니 잔액
-    statusBalance: string; //잔액 상태
-    statusDayLimitBudget: string | number; //일일 허용 예산
+    balanceDesc?: string; //잔액
+    eventMoneyBalanceDesc?: string; //이벤트 머니 잔액
+    statusBalance?: string; //잔액 상태
+    statusDayLimitBudget?: string | number; //일일 허용 예산
 }
 //그룹 리스트
 export interface AdGroupList {
     key: number; //ID값
+    index?: number; //번호
     agroupName: string; //그룹이름
-    adActYn: number; //활성상태(전체)
+    adActYn?: number; //활성상태(전체)
     adUseConfigYn: number; //사용 설정 상태(라이브)
     agroupUseActYn: number; //광고그룹 사용 설정 여부 -> 조건 하나 더 걸어야함.
     regTime: string; //등록 시간

@@ -23,8 +23,6 @@ export const AgroupSearch = ({ agroupSearchInput, setAgroupSearchInput, setAgrou
             agroupName: agroupSearchInput,
         })
             .then((res) => {
-                console.log('그룹리스트 조회 버튼 눌렀을 때');
-                console.log(res.data);
                 setAgroupList(res.data);
             })
             .catch((err) => {

@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    BaseSyntheticEvent,
+    EventHandler,
+    MouseEvent,
+    MouseEventHandler,
+    useEffect,
+    useState,
+} from 'react';
 import { Button, Input, Modal, PaginationProps, Table } from 'antd';
 import { AdGroupList, AgroupListCsv } from '../../../DataType/ManageType';
 import { ColumnsType } from 'antd/es/table';
-import { CSVLink, CSVDownload } from 'react-csv';
-import { APIs } from '../../../api/ApiService';
+import { CSVLink } from 'react-csv';
 import { Link, useNavigate } from 'react-router-dom';
 import { AgroupAPIs } from '../../../api/AgroupAPIs';
 
@@ -37,7 +43,6 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             agroupName: item.agroupName,
             agroupUseActYn: item.agroupUseActYn,
             itemCount: item.adUseConfigYn + '/' + item.adActYn,
-            // itemCount: 0,
         }));
         let index = 1;
         CsvData.forEach((item) => {
@@ -50,30 +55,32 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
 
     //초기 세팅
     useEffect(() => {
-        if (agroupList.length == 0) {
-            getAdGroupList({
-                name: localStorage.getItem('ID') as string,
-                agroupName: '',
-            })
-                .then((res) => {
-                    console.log('그룹리스트 조회 버튼 눌렀을 때');
-                    console.log(res.data);
-                    setAgroupList(res.data);
-                })
-                .catch((err) => {
-                    console.log(err);
+        getAdGroupList({
+            name: localStorage.getItem('ID') as string,
+            agroupName: '',
+        })
+            .then((res) => {
+                console.log(res.data);
+                let index = 1;
+                res.data.forEach((item: AdGroupList) => {
+                    item.index = index;
+                    index += 1;
                 });
-        }
+                setAgroupList(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }, []);
 
     //테이블 컬럼
     const columns: ColumnsType<AdGroupList> = [
         {
             title: '번호',
-            dataIndex: 'key',
-            key: 'key1',
+            dataIndex: 'index',
+            // key: 'key1',
             align: 'center',
-            render: (value, record, index) => <span>{index + 1}</span>,
+            render: (value, record, index) => <span>{record.index}</span>,
         },
         {
             title: '그룹명',
@@ -84,14 +91,11 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                 <Link
                     to={'/manageagroup'}
                     state={{
-                        agroupName: agroupList?.[index].agroupName,
-                        agroupUseActYn: agroupList?.[index].agroupUseActYn,
-                        agroupRegTime: agroupList?.[index].regTime,
-                        agroupId: agroupList?.[index].key,
+                        agroupId: agroupList?.[index].key, //이걸 가지고 가서 다시 불러옴
                     }}
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
-                    {agroupList?.[index].agroupName}
+                    {record.agroupName}
                 </Link>
             ),
         },
@@ -106,7 +110,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                     onClick={AgroupListTableOnOffChange}
                     style={{ color: 'dodgerblue', textDecoration: 'underline' }}
                 >
-                    {agroupList?.[index].agroupUseActYn === 1 ? 'ON' : 'OFF'}
+                    {record.agroupUseActYn === 1 ? 'ON' : 'OFF'}
                 </button>
             ),
         },
@@ -116,24 +120,27 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             align: 'center',
             render: (value, record, index) => (
                 <span>
-                    {agroupList?.[index].adUseConfigYn}/{agroupList?.[index].adActYn}
+                    {record.adUseConfigYn}/{record.adActYn}
                 </span>
             ),
         },
     ];
-    const AgroupListTableOnOffChange = (e: any) => {
+    const AgroupListTableOnOffChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+        console.log(e);
         console.log('--------------------------------------------');
-        console.log(e.target.value);
+        console.log(e.currentTarget.value);
         console.log('--------------------------------------------');
-        updateAgroupUseActYn({ name: e.target.value })
+        updateAgroupUseActYn({ agroupUseActYn: e.currentTarget.value })
             .then((res) => {
                 console.log(res);
             })
             .catch((res) => {
                 console.log(res);
             });
-        alert('그룹 사용이 변경되었습니다.');
-        window.location.replace('/managead');
+        Modal.info({
+            content: '그룹 사용 여부가 변경되었습니다.',
+        });
+        // window.location.replace('/managead');
     };
 
     //테이블 체크박스
@@ -146,24 +153,43 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
     };
 
     //그룹 ON/OFF 일괄설정
+    // const agroupOnOffButton = (e: React.MouseEventHandler<HTMLButtonElement>) => {
     const agroupOnOffButton = (e: any) => {
+        console.log(e);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            console.log('sdsd');
-            alert('체크 박스를 먼저 골라주세요.');
+            Modal.warning({
+                content: '체크박스를 먼저 선택해 주십시오',
+            });
             return null;
         }
-        getAgroupOnOff({ idList: checkBoxList, yn: e.target.value })
+        getAgroupOnOff({ idList: checkBoxList, yn: parseInt(e.target.value) })
             .then((res) => {
                 console.log(res);
+                //2중 포문
+                let temp = agroupList!;
+                temp.forEach((item) => {
+                    checkBoxList.forEach((arr) => {
+                        if (item.key === arr) {
+                            console.log('item.agroupUseActYn', item.agroupUseActYn);
+                            console.log('e.target.value', e.target.value);
+                            item.agroupUseActYn = parseInt(e.target.value);
+                            console.log('일리와');
+                        }
+                    });
+                });
+                console.log(temp[0]);
+                setAgroupList([...temp!]);
+                Modal.info({
+                    content: '성공!',
+                });
             })
             .catch((err) => {
                 console.log(err);
+                Modal.error({
+                    content: '시일이일패!',
+                });
             });
-        //여기서 그룹리스트를 랜더링 시켜줘야함
-        alert('변경되었습니다.');
-        // navigate('/managead', { replace: true });
-        window.location.replace('/managead');
     };
     /* ******************************************************************************************************* */
     /* ******************************************************************************************************* */
@@ -188,9 +214,13 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                 }
             });
             if (input.length == 0) {
-                alert('빈칸입니다');
+                Modal.warning({
+                    content: '빈칸입니다!',
+                });
             } else if (!temp) {
-                alert('이미 중복된 값 입니다.');
+                Modal.warning({
+                    content: '이미 중복된 값 입니다!',
+                });
             } else {
                 //api
                 saveAgroup({ agroupName: input })
@@ -200,7 +230,9 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                     .catch((err) => {
                         console.log(err);
                     });
-                alert('변경되었습니다.');
+                Modal.info({
+                    content: '변경되었습니다',
+                });
                 window.location.replace('/managead');
                 setInput('');
                 setIsModalOpen(false);
@@ -249,7 +281,9 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                             onClick={() => {
                                 //이거 밖으로
                                 if (checkBoxList.length == 0) {
-                                    alert('체크리스트를 선택해 주십시오');
+                                    Modal.warning({
+                                        content: '체크리스트를 선택해 주십시오!',
+                                    });
                                 } else {
                                     deleteAgroupActYn({ idList: checkBoxList })
                                         .then((res) => {
@@ -258,7 +292,9 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
                                         .catch((err) => {
                                             console.log(err);
                                         });
-                                    alert('삭제 되었습니다.');
+                                    Modal.warning({
+                                        content: '삭제되었습니다!',
+                                    });
                                     window.location.replace('/managead');
                                 }
                             }}

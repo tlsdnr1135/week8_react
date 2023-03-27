@@ -6,6 +6,12 @@ export const AgroupAPIs = () => ({
     //광고그룹 셀렉터BOX 조회
     getAgroupSelectBoxList: () => API.get('/api/agroup/find'),
 
+    //광고그룹 단일 조회
+    getAgroupDetails: (parameter: { agroupId: number }) =>
+        API.get('/api/agroup/find/details', {
+            params: { agroupId: parameter.agroupId },
+        }),
+
     //그룹 리스트 조회
     getAdGroupList: (parameter: { name: string; agroupName: string }) =>
         API.get('/api/agroup/find/manage', {
@@ -26,9 +32,9 @@ export const AgroupAPIs = () => ({
         }),
 
     //광고그룹 사용 설정 여부(agroupUseActYn)변경
-    updateAgroupUseActYn: (parameter: { name: string }) =>
+    updateAgroupUseActYn: (parameter: { agroupUseActYn: string }) =>
         API.put('/api/agroup/update/agroupuseactyn', {
-            agroupName: parameter.name,
+            agroupName: parameter.agroupUseActYn,
         }),
 
     //광고그룹 이름 변경하기(AgroupName)

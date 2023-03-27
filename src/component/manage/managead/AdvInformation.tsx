@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
 import { APIs } from '../../../api/ApiService';
-import { Button, Input, Modal, Switch } from 'antd';
+import { Button, Input, InputProps, InputRef, Modal, Switch } from 'antd';
 import { AdvMngType } from '../../../DataType/ManageType';
+import { CustomOneInputModal } from '../../modal/CustomOneInputModal';
+import OriginModal from 'antd/es/modal/Modal';
 
 export const AdvInformation = () => {
     const { getAdv, updateAdvAdIngActYn, updateAdvDayLimitBudget } = APIs(); //api
@@ -11,28 +13,14 @@ export const AdvInformation = () => {
 
     useEffect(() => {
         //초기 API세팅
-        if (adv === undefined) {
-            getAdv({ name: localStorage.getItem('ID') as string })
-                .then((res) => {
-                    console.log(res);
-                    const temp: AdvMngType | undefined = {
-                        advId: localStorage.getItem('ID') as string,
-                        adIngActYn: res.data.adIngActYn,
-                        balance: res.data.balance,
-                        eventMoneyBalance: res.data.eventMoneyBalance,
-                        dayLimitBudget: res.data.dayLimitBudget,
-                        statusBalance: '',
-                        statusDayLimitBudget: '',
-                        balanceDesc: '',
-                        eventMoneyBalanceDesc: '',
-                    };
-                    procAdvMngType(temp);
-                    setAdv(temp);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+        getAdv({ name: localStorage.getItem('ID') as string })
+            .then((res) => {
+                procAdvMngType(res.data);
+                setAdv(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }, []);
 
     //Adv Desc 가공
@@ -56,64 +44,60 @@ export const AdvInformation = () => {
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
     //광고주 스위치
-    const advSwitch = (e: any) => {
-        console.log(e);
-        let adIngActYn;
-        if (e) {
-            adIngActYn = 1;
-        } else {
-            adIngActYn = 0;
-        }
+    const advSwitch = (e: boolean) => {
+        let adIngActYn = e ? 1 : 0;
         updateAdvAdIngActYn({ name: localStorage.getItem('ID') as string, adIngActYn: adIngActYn })
             .then((res) => {
                 const temp = adv;
                 temp!.adIngActYn = res.data.adIngActYn;
-                console.log(temp);
                 setAdv({ ...temp! });
+                Modal.success({
+                    content: '변경이 완료되었습니다.',
+                });
             })
             .catch((err) => {
                 console.log(err);
+                Modal.error({
+                    content: '오류! 비상!!!!!!!!!',
+                });
             });
-        alert('변경 완료 되었습니다.');
-        // navigate('/manage');
     };
     //모달
-    const modalHandle = (e: any) => {
-        console.log('modalHandle', e.target.value);
-        let cost = parseInt(input);
+    const modalHandle = (e: React.BaseSyntheticEvent<EventTarget>) => {
+        //이거 고쳐야함 --------------------------------------------------------------------------------------------
         if (e.target.value === 'CANCEL') {
             setInput('');
         } else {
+            let cost = parseInt(input);
             //100원 단위가 아닐경우
             if (cost % 100 != 0) {
-                alert('100원 단위로 입력해주세요');
+                Modal.error({
+                    content: '100원 단위로 입력해주세요',
+                });
                 return null;
             }
-            setInput('');
-            const temp = adv;
-            temp!.dayLimitBudget = cost;
-            procAdvMngType(temp!);
-            console.log(temp);
-            setAdv({ ...temp! });
-            //API추가
+            //API
             updateAdvDayLimitBudget({
                 name: localStorage.getItem('ID') as string,
                 dayLimitBudget: cost,
             })
                 .then((res) => {
-                    console.log(res);
+                    setInput('');
+                    const temp = adv;
+                    temp!.dayLimitBudget = cost;
+                    procAdvMngType(temp!);
+                    setAdv({ ...temp! });
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         }
-
         setIsModalOpen(false);
     };
     //모달 인풋
-    const InputModalChange = (e: any) => {
+    const InputModalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log('InputModalChange', e.target.value);
-        setInput(e.target.value);
+        setInput(e.currentTarget.value);
     };
 
     return (
@@ -255,64 +239,73 @@ export const AdvInformation = () => {
             {/******************************************************************************************************/}
             {/******************************************************************************************************/}
             {/******************************************************************************************************/}
-            <Modal
-                className="ant-modal-content"
-                title="일일 허용 예산 설정"
+            <CustomOneInputModal
+                title={'일일 허용 예산 설정'}
                 width={800}
-                open={isModalOpen}
-                // onOk={handleOk}
-                // onCancel={handleCancel}
-                footer={[
-                    <>
-                        <Button
-                            type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"
-                            value={'CANCEL'}
-                            onClick={modalHandle}
-                        >
-                            <span>취소</span>
-                        </Button>
-                        <Button
-                            type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"
-                            value={'OK'}
-                            onClick={modalHandle}
-                        >
-                            <span>변경</span>
-                        </Button>
-                    </>,
-                ]}
-            >
-                <section className="wrap-section wrap-tbl">
-                    <div className="box-body">
-                        <div className="tbl">
-                            <dl>
-                                <dt>
-                                    <div className="dt-inner">
-                                        <span className="fz-16 fw-med fc-7">
-                                            일일 허용 예산<i className="txt-essential"></i>
-                                        </span>
-                                    </div>
-                                </dt>
-                                <dd>
-                                    <div className="form-group">
-                                        <Input
-                                            type="text"
-                                            name="groupName"
-                                            value={input}
-                                            onChange={InputModalChange}
-                                            style={{
-                                                width: '300px',
-                                            }}
-                                        />
-                                        원
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </section>
-            </Modal>
+                input={input}
+                InputModalChange={InputModalChange}
+                isModalOpen={isModalOpen}
+                modalHandle={modalHandle}
+            />
+            {/*</CustomOneInputModal>*/}
+            {/*<Modal*/}
+            {/*    className="ant-modal-content"*/}
+            {/*    title="일일 허용 예산 설정"*/}
+            {/*    width={800}*/}
+            {/*    open={isModalOpen}*/}
+            {/*    // onOk={handleOk}*/}
+            {/*    // onCancel={handleCancel}*/}
+            {/*    footer={[*/}
+            {/*        <>*/}
+            {/*            <Button*/}
+            {/*                type="primary"*/}
+            {/*                className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg gray"*/}
+            {/*                value={'CANCEL'}*/}
+            {/*                onClick={modalHandle}*/}
+            {/*            >*/}
+            {/*                <span>취소</span>*/}
+            {/*            </Button>*/}
+            {/*            <Button*/}
+            {/*                type="primary"*/}
+            {/*                className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink"*/}
+            {/*                value={'OK'}*/}
+            {/*                onClick={modalHandle}*/}
+            {/*            >*/}
+            {/*                <span>변경</span>*/}
+            {/*            </Button>*/}
+            {/*        </>,*/}
+            {/*    ]}*/}
+            {/*>*/}
+            {/*    <section className="wrap-section wrap-tbl">*/}
+            {/*        <div className="box-body">*/}
+            {/*            <div className="tbl">*/}
+            {/*                <dl>*/}
+            {/*                    <dt>*/}
+            {/*                        <div className="dt-inner">*/}
+            {/*                            <span className="fz-16 fw-med fc-7">*/}
+            {/*                                일일 허용 예산<i className="txt-essential"></i>*/}
+            {/*                            </span>*/}
+            {/*                        </div>*/}
+            {/*                    </dt>*/}
+            {/*                    <dd>*/}
+            {/*                        <div className="form-group">*/}
+            {/*                            <Input*/}
+            {/*                                type="text"*/}
+            {/*                                name="groupName"*/}
+            {/*                                value={input}*/}
+            {/*                                onChange={InputModalChange}*/}
+            {/*                                style={{*/}
+            {/*                                    width: '300px',*/}
+            {/*                                }}*/}
+            {/*                            />*/}
+            {/*                            원*/}
+            {/*                        </div>*/}
+            {/*                    </dd>*/}
+            {/*                </dl>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </section>*/}
+            {/*</Modal>*/}
         </>
     );
 };

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { AgroupInformation } from './manageagroup/AgroupInformation';
 import { ItemSearh } from './manageagroup/ItemSearh';
 import { ItemList } from './manageagroup/ItemList';
-import { ItemListDataType } from '../../DataType/ManageType';
+import { AdGroupList, ItemListDataType } from '../../DataType/ManageType';
 
 export const ManageAgroup = () => {
     const [itemList, setItemList] = useState<ItemListDataType[]>([]);
+    const [agroupList, setAgroupList] = useState<AdGroupList[]>([]); //그룹 리스트
     return (
         <>
             <main className="ant-layout-content css-dev-only-do-not-override-1me4733">

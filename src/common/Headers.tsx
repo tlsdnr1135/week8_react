@@ -14,7 +14,6 @@ const advItems: MenuProps['items'] = [
     {
         label: '광고 관리',
         key: '/managead',
-        // key: '/manageagroup',
         icon: <i className="ico ico-menu-02" />,
     },
 ];
@@ -28,46 +27,35 @@ const adminItems: MenuProps['items'] = [
 
 export const Headers = () => {
     const url = useLocation();
-    let urls = ('/' + url.pathname.substring(1, url.pathname.length)) as string;
     const { role, setLogoutHandler } = useLoginStore();
     const [current, setCurrent] = useState('/regad');
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
-    //초기값과 커렌트 다르면
-    // if (current != urls) {
-    // useEffect(() => {
-    //     console.log('헤더의 유즈이펙트');
-    //     let state = '';
-    //     console.log(urls);
-    //     switch (urls) {
-    //         case '/regad':
-    //             state = '/regad';
-    //             // setCurrent('/regad');
-    //             break;
-    //         case '/managed':
-    //             state = '/managead';
-    //             // setCurrent('/managed');
-    //             break;
-    //         default:
-    //             state = '/managead';
-    //             // setCurrent('/managed');
-    //             break;
-    //     }
-    //     console.log('마지막 상태', state);
-    //     setCurrent(state);
-    //     // navigate(urls);
-    // }, [current]);
-    console.log(current);
-    console.log(urls);
-
-    // }
-
-    //초기값을 가져온다.
-    //초기값이 위의 두개값이 아니라면 둘중에 하나에 넣어준다.
-    console.log(('/' + url.pathname.substring(1, url.pathname.length)) as string);
-    console.log(urls);
+    // console.log('현재 커런트', current);
+    // console.log('현재 urls', urls);
+    // console.log('현재 url', url.pathname);
+    useEffect(() => {
+        switch (url.pathname) {
+            case '/regad':
+                setCurrent('/regad');
+                break;
+            case '/managead':
+                setCurrent('/managead');
+                break;
+            case '/manageagroup':
+                setCurrent('/managead');
+                break;
+            case '/manageitem':
+                setCurrent('/managead');
+                break;
+            // default:
+            //     setCurrent('/regad');
+            //     break;
+        }
+    }, []);
 
     const moveAdvPage = (e: any) => {
+        console.log('바꾸는 커렌트', e.key);
         setCurrent(e.key);
         navigate(e.key);
     };
