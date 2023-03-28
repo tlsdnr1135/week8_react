@@ -24,6 +24,19 @@ export interface AdGroupList {
     // adActYnDesc: string; //활성상태(On/Off)
     // itemCount:
 }
+//그룹 리스트
+export interface AdGroupList {
+    key: number; //ID값
+    index?: number; //번호
+    agroupName: string; //그룹이름
+    adActYn?: number; //활성상태(전체)
+    adUseConfigYn: number; //사용 설정 상태(라이브)
+    agroupUseActYn: number; //광고그룹 사용 설정 여부 -> 조건 하나 더 걸어야함.
+    regTime: string; //등록 시간
+    // **************************************************************
+    // adActYnDesc: string; //활성상태(On/Off)
+    // itemCount:
+}
 //CSV
 export interface AgroupListCsv {
     key: number; //번호
