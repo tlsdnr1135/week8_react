@@ -5,7 +5,11 @@ import { AgroupAPIs } from '../../../api/AgroupAPIs';
 import moment from 'moment';
 import { AdGroupList } from '../../../DataType/ManageType';
 
-export const AgroupInformation = () => {
+interface props {
+    agroup: AdGroupList;
+    setAgroup: React.Dispatch<React.SetStateAction<AdGroupList | undefined>>;
+}
+export const AgroupInformation = ({ agroup, setAgroup }: props) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { updateAgroupName, updateAgroupUseActYn, getAgroupDetails } = AgroupAPIs(); //AgroupAPI
@@ -13,7 +17,6 @@ export const AgroupInformation = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); //광고그룹 이름 변경 모달
     const [input, setInput] = useState(''); //광고그룹 이름 변경 모달 인풋
     const [agroupUseActYn, setAgroupUseActYn] = useState<number>(); //스위치
-    const [agroup, setAgroup] = useState<AdGroupList>();
 
     //초기 그룹관리 세팅
     useEffect(() => {
@@ -35,9 +38,9 @@ export const AgroupInformation = () => {
     const InputModalChange = (e: any) => {
         console.log('InputModalChange', e.target.value);
         console.log('파악하려고', e);
-        if (e.target.value == 1) {
-            alert('sdsdsd');
-        }
+        // if (e.target.value == 1) {
+        //     Modal.('sdsdsd');
+        // }
         setInput(e.target.value);
     };
     //등록 모달
@@ -50,12 +53,14 @@ export const AgroupInformation = () => {
         } else if (e.target.value === 'OK') {
             const emailRegEx = /^([0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝|-])/;
             if (!emailRegEx.test(input)) {
-                alert('특수 문자나 공백은 사용할 수 없습니다.');
+                Modal.warning({ content: '특수 문자나 공백은 사용할 수 없습니다.' });
                 return;
             }
             console.log(agroup?.agroupName);
             updateAgroupName({ beforeAgroupName: agroup?.agroupName!, afterAgroupName: input })
                 .then((res) => {
+                    console.log('현재 닉네임', agroup?.agroupName);
+                    console.log('바꿀 닉네임', input);
                     console.log(res.data);
                     agroup!.agroupName = res.data as string;
                     setAgroup(agroup);
@@ -64,7 +69,7 @@ export const AgroupInformation = () => {
                 })
                 .catch((err) => {
                     console.log(err);
-                    Modal.info({ content: '이미 존재하는 아이디 입니다' });
+                    Modal.error({ content: '이미 존재하는 아이디 입니다' });
                 });
         }
     };
@@ -186,7 +191,7 @@ export const AgroupInformation = () => {
                                                             window.location.replace('/regad');
                                                         }}
                                                     >
-                                                        <span>그룹추가</span>
+                                                        <span>광고 상품 등록</span>
                                                     </Button>
                                                 </b>
                                             </span>

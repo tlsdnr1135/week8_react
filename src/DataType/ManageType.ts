@@ -32,6 +32,7 @@ export interface AdGroupList {
     adActYn?: number; //활성상태(전체)
     adUseConfigYn: number; //사용 설정 상태(라이브)
     agroupUseActYn: number; //광고그룹 사용 설정 여부 -> 조건 하나 더 걸어야함.
+    agroupActYn: number;
     regTime: string; //등록 시간
     // **************************************************************
     // adActYnDesc: string; //활성상태(On/Off)
@@ -60,6 +61,7 @@ export interface KeywordListCsv {
 //ItemList
 export interface ItemListDataType {
     key: number; //번호
+    index: number; //번호
     adultYn: number; //성인 여부
     itemActYn: number; //상품 활성 여부
     itemName: string; //아이템 이름
@@ -72,6 +74,7 @@ export interface ItemListDataType {
 //keywordList
 export interface KeywordListDataType {
     key: number;
+    index: number;
     kwdName: string;
     manualCnrKwdYn: number;
     sellPossKwdYn: number;

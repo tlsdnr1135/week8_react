@@ -11,6 +11,7 @@ import { AgroupAPIs } from '../../api/AgroupAPIs';
 export const ManageAd = () => {
     const [agroupSearchInput, setAgroupSearchInput] = useState(''); //그룹 조회 인풋
     const [agroupList, setAgroupList] = useState<AdGroupList[]>([]); //그룹 리스트
+    const [adv, setAdv] = useState<AdvMngType>(); //광고주 계정 설정 및 정보
 
     //모달 변경 시 api
     return (
@@ -22,7 +23,7 @@ export const ManageAd = () => {
                             <h1 className="fz-32 fc-gray-900">광고 관리</h1>
                         </div>
                         <div className="content-body">
-                            <AdvInformation />
+                            <AdvInformation adv={adv!} setAdv={setAdv!} />
                             <AgroupSearch
                                 agroupSearchInput={agroupSearchInput}
                                 setAgroupSearchInput={setAgroupSearchInput}

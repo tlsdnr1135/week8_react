@@ -5,14 +5,18 @@ import { AdvMngType } from '../../../DataType/ManageType';
 import { CustomOneInputModal } from '../../modal/CustomOneInputModal';
 import OriginModal from 'antd/es/modal/Modal';
 
-export const AdvInformation = () => {
+interface props {
+    adv: AdvMngType;
+    setAdv: React.Dispatch<React.SetStateAction<AdvMngType | undefined>>;
+}
+export const AdvInformation = ({ adv, setAdv }: props) => {
     const { getAdv, updateAdvAdIngActYn, updateAdvDayLimitBudget } = APIs(); //api
-    const [adv, setAdv] = useState<AdvMngType>(); //광고주 계정 설정 및 정보
+    // const [adv, setAdv] = useState<AdvMngType>(); //광고주 계정 설정 및 정보
     const [isModalOpen, setIsModalOpen] = useState(false); //광고주 모달
     const [input, setInput] = useState('0'); //광고주 모달 인풋
 
+    //초기 API세팅
     useEffect(() => {
-        //초기 API세팅
         getAdv({ name: localStorage.getItem('ID') as string })
             .then((res) => {
                 procAdvMngType(res.data);
@@ -63,37 +67,34 @@ export const AdvInformation = () => {
             });
     };
     //모달
-    const modalHandle: React.MouseEventHandler<HTMLAnchorElement> = (
-        e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-    ) => {
-        //이거 고쳐야함 --------------------------------------------------------------------------------------------
-        // if ('sd' === 'CANCEL') {
-        //     setInput('');
-        // } else {
-        //     let cost = parseInt(input);
-        //     //100원 단위가 아닐경우
-        //     if (cost % 100 != 0) {
-        //         Modal.error({
-        //             content: '100원 단위로 입력해주세요',
-        //         });
-        //         return null;
-        //     }
-        //     //API
-        //     updateAdvDayLimitBudget({
-        //         name: localStorage.getItem('ID') as string,
-        //         dayLimitBudget: cost,
-        //     })
-        //         .then((res) => {
-        //             setInput('');
-        //             const temp = adv;
-        //             temp!.dayLimitBudget = cost;
-        //             procAdvMngType(temp!);
-        //             setAdv({ ...temp! });
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         });
-        // }
+    const modalHandle: React.MouseEventHandler<HTMLAnchorElement> = (e: any) => {
+        if (e.target.value === 'CANCEL') {
+            setInput('');
+        } else {
+            let cost = parseInt(input);
+            //100원 단위가 아닐경우
+            if (cost % 100 != 0) {
+                Modal.error({
+                    content: '100원 단위로 입력해주세요',
+                });
+                return null;
+            }
+            //API
+            updateAdvDayLimitBudget({
+                name: localStorage.getItem('ID') as string,
+                dayLimitBudget: cost,
+            })
+                .then((res) => {
+                    setInput('');
+                    const temp = adv;
+                    temp!.dayLimitBudget = cost;
+                    procAdvMngType(temp!);
+                    setAdv({ ...temp! });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
         setIsModalOpen(false);
     };
     //모달 인풋

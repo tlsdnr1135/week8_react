@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, PaginationProps, Table } from 'antd';
+import { Button, Modal, PaginationProps, Table } from 'antd';
 import { CSVLink } from 'react-csv';
 import {
     AgroupListCsv,
@@ -28,16 +28,21 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
 
     //초기값 세팅
     useEffect(() => {
-        if (keywordList.length === 0) {
-            getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: '' })
-                .then((res) => {
-                    console.log(res);
-                    setKeywordList(res.data);
-                })
-                .catch((err) => {
-                    console.log(err);
+        console.log('짱구짱구짱구짱구짱구짱구짱구짱구짱구짱구짱구짱구짱구');
+        console.log(location.state.adId);
+        getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: '' })
+            .then((res) => {
+                console.log(res);
+                let index = 1;
+                res.data.forEach((item: KeywordListDataType) => {
+                    item.index = index;
+                    index += 1;
                 });
-        }
+                setKeywordList(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }, []);
 
     //csv
@@ -68,7 +73,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         console.log(e.target.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            alert('체크 박스를 먼저 골라주세요.');
+            Modal.warning({ content: '체크 박스를 먼저 골라주세요.' });
             return null;
         }
         console.log('리턴 널 체크');
@@ -77,8 +82,20 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         updateDadUseConfigYnOnOffAll({ idList: checkBoxList, yn: e.target.value })
             .then((res) => {
                 console.log(res);
-                alert('키워드 상태가 변경되었습니다.');
-                window.location.replace('/manageitem');
+                getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: '' })
+                    .then((res) => {
+                        console.log(res);
+                        let index = 1;
+                        res.data.forEach((item: KeywordListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setKeywordList(res.data);
+                        Modal.info({ content: '키워드 상태가 변경되었습니다.' });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             })
             .catch((err) => {
                 console.log(err);
@@ -89,7 +106,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         console.log(e.target.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            alert('체크 박스를 먼저 골라주세요.');
+            Modal.warning({ content: '체크 박스를 먼저 골라주세요.' });
             return null;
         }
         console.log('리턴 널 체크');
@@ -99,8 +116,20 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         updateDaddetActYnDeleteButton({ idList: checkBoxList })
             .then((res) => {
                 console.log(res);
-                alert('광고 상품 상태가 되었습니다.');
-                window.location.replace('/manageitem');
+                getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: '' })
+                    .then((res) => {
+                        console.log(res);
+                        let index = 1;
+                        res.data.forEach((item: KeywordListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setKeywordList(res.data);
+                        Modal.warning({ content: '키워드가 삭제되었습니다' });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             })
             .catch((err) => {
                 console.log(err);
@@ -125,8 +154,20 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
         })
             .then((res) => {
                 console.log(res);
-                alert('변경이 완료되엇습니다');
-                window.location.replace('/manageitem');
+                getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: '' })
+                    .then((res) => {
+                        console.log(res);
+                        let index = 1;
+                        res.data.forEach((item: KeywordListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setKeywordList(res.data);
+                        Modal.info({ content: '변경이 완료되었습니다.' });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             })
             .catch((err) => {
                 console.log(err);
@@ -153,7 +194,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
             dataIndex: 'key',
             key: 'key',
             align: 'center',
-            render: (value, record, index) => <span>{index + 1}</span>,
+            render: (value, record, index) => <span>{record.index}</span>,
         },
         {
             title: '키워드 명',
@@ -172,7 +213,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
                     onClick={updateOnOffOne}
                     style={{ color: 'dodgerblue', textDecoration: 'underline' }}
                 >
-                    {keywordList?.[index].dadUseConfigYn === 1 ? 'ON' : 'OFF'}
+                    {record.dadUseConfigYn === 1 ? 'ON' : 'OFF'}
                 </button>
             ),
         },

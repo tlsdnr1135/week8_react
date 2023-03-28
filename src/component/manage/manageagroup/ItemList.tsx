@@ -5,7 +5,7 @@ import {
     ItemListCsv,
     ItemListDataType,
 } from '../../../DataType/ManageType';
-import { Button, PaginationProps, Table } from 'antd';
+import { Button, Modal, PaginationProps, Table } from 'antd';
 import { CSVLink } from 'react-csv';
 import { ColumnsType } from 'antd/es/table';
 import { Link, useLocation } from 'react-router-dom';
@@ -15,8 +15,10 @@ import { AdAPIs } from '../../../api/AdAPIs';
 interface props {
     itemList: ItemListDataType[];
     setItemList: React.Dispatch<React.SetStateAction<ItemListDataType[]>>;
+    agroup: AdGroupList;
+    setAgroup: React.Dispatch<React.SetStateAction<AdGroupList | undefined>>;
 }
-export const ItemList = ({ itemList, setItemList }: props) => {
+export const ItemList = ({ itemList, setItemList, agroup, setAgroup }: props) => {
     const location = useLocation();
     const { getItemListJoinAdWhereItemNameAndItemNo } = ItemAPIs(); //AgroupAPI
     const { updateAdOnOff, updateAdDeleteButton } = AdAPIs(); //AdApi
@@ -26,22 +28,25 @@ export const ItemList = ({ itemList, setItemList }: props) => {
 
     //초기 세팅 -> 유즈 이펙트
     useEffect(() => {
-        if (itemList.length == 0) {
-            getItemListJoinAdWhereItemNameAndItemNo({
-                itemNo: '' as string,
-                itemName: '' as string,
-                advId: localStorage.getItem('ID') as string,
-                agroupId: location.state.agroupId,
-            })
-                .then((res) => {
-                    console.log('그룹리스트 조회 버튼 눌렀을 때');
-                    console.log(res.data);
-                    setItemList(res.data);
-                })
-                .catch((err) => {
-                    console.log(err);
+        getItemListJoinAdWhereItemNameAndItemNo({
+            itemNo: '' as string,
+            itemName: '' as string,
+            advId: localStorage.getItem('ID') as string,
+            agroupId: location.state.agroupId,
+        })
+            .then((res) => {
+                console.log('그룹리스트 조회 버튼 눌렀을 때');
+                console.log(res.data);
+                let index = 1;
+                res.data.forEach((item: ItemListDataType) => {
+                    item.index = index;
+                    index += 1;
                 });
-        }
+                setItemList(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }, []);
 
     //csv
@@ -88,7 +93,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         console.log(e.target.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            alert('체크 박스를 먼저 골라주세요.');
+            Modal.warning({ content: '체크 박스를 먼저 골라주세요.' });
             return null;
         }
         console.log('리턴 널 체크');
@@ -96,8 +101,26 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         updateAdOnOff({ idList: checkBoxList, yn: e.target.value })
             .then((res) => {
                 console.log(res);
-                alert('광고 상품 상태가 변경되었습니다.');
-                window.location.replace('/manageagroup');
+                getItemListJoinAdWhereItemNameAndItemNo({
+                    itemNo: '' as string,
+                    itemName: '' as string,
+                    advId: localStorage.getItem('ID') as string,
+                    agroupId: location.state.agroupId,
+                })
+                    .then((res) => {
+                        console.log('ItemTable의 광고 사용 활성 여부 일괄 변경');
+                        console.log(res.data);
+                        let index = 1;
+                        res.data.forEach((item: ItemListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setItemList(res.data);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                Modal.info({ content: '광고 상품 상태가 변경되었습니다.' });
             })
             .catch((err) => {
                 console.log(err);
@@ -109,7 +132,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         console.log(e.target.value);
         //체크버튼이 하나도 안 눌러져있으면!
         if (checkBoxList.length == 0) {
-            alert('체크 박스를 먼저 골라주세요.');
+            Modal.warning({ content: '체크 박스를 먼저 골라주세요.' });
             return null;
         }
         console.log('리턴 널 체크');
@@ -118,8 +141,29 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         updateAdDeleteButton({ idList: checkBoxList, yn: e.target.value })
             .then((res) => {
                 console.log(res);
-                alert('광고 상품 상태가 되었습니다.');
-                window.location.replace('/manageagroup');
+                getItemListJoinAdWhereItemNameAndItemNo({
+                    itemNo: '' as string,
+                    itemName: '' as string,
+                    advId: localStorage.getItem('ID') as string,
+                    agroupId: location.state.agroupId,
+                })
+                    .then((res) => {
+                        console.log('ItemTable의 광고 사용 활성 여부 일괄 변경');
+                        console.log(res.data);
+                        let index = 1;
+                        res.data.forEach((item: ItemListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setItemList(res.data);
+                        // let temp = agroup;
+                        agroup.adActYn = (agroup.adActYn as number) - 1;
+                        setAgroup(agroup);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                Modal.info({ content: '광고 상품이 삭제되었습니다' });
             })
             .catch((err) => {
                 console.log(err);
@@ -134,8 +178,26 @@ export const ItemList = ({ itemList, setItemList }: props) => {
         updateAdOnOff({ idList: temp, yn: itemList?.[e.target.value].adUseConfigYn == 1 ? 0 : 1 })
             .then((res) => {
                 console.log(res);
-                alert('그룹 사용이 변경되었습니다.');
-                window.location.replace('/manageagroup');
+                getItemListJoinAdWhereItemNameAndItemNo({
+                    itemNo: '' as string,
+                    itemName: '' as string,
+                    advId: localStorage.getItem('ID') as string,
+                    agroupId: location.state.agroupId,
+                })
+                    .then((res) => {
+                        console.log('ItemTable의 광고 사용 활성 여부 일괄 변경');
+                        console.log(res.data);
+                        let index = 1;
+                        res.data.forEach((item: ItemListDataType) => {
+                            item.index = index;
+                            index += 1;
+                        });
+                        setItemList(res.data);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                Modal.info({ content: '광고 상품이 삭제되었습니다' });
             })
             .catch((err) => {
                 console.log(err);
@@ -149,7 +211,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
             dataIndex: 'key',
             key: 'key',
             align: 'center',
-            render: (value, record, index) => <span>{index + 1}</span>,
+            render: (value, record, index) => <span>{record.index}</span>,
         },
         {
             title: '상품번호',
@@ -160,12 +222,11 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                 <Link
                     to={'/manageitem'}
                     state={{
-                        adId: itemList?.[index].adId,
-                        // agroupName: itemList?.[index].a,
+                        adId: record.adId,
                     }}
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
-                    {itemList?.[index].itemNo}
+                    {record.itemNo}
                 </Link>
             ),
         },
@@ -185,7 +246,7 @@ export const ItemList = ({ itemList, setItemList }: props) => {
                     onClick={itemListTableOnOffChange}
                     style={{ color: 'dodgerblue', textDecoration: 'underline' }}
                 >
-                    {itemList?.[index].adUseConfigYn === 1 ? 'ON' : 'OFF'}
+                    {record.adUseConfigYn === 1 ? 'ON' : 'OFF'}
                 </button>
             ),
         },

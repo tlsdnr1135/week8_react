@@ -23,6 +23,12 @@ export const AgroupSearch = ({ agroupSearchInput, setAgroupSearchInput, setAgrou
             agroupName: agroupSearchInput,
         })
             .then((res) => {
+                console.log(res.data);
+                let index = 1;
+                res.data.forEach((item: AdGroupList) => {
+                    item.index = index;
+                    index += 1;
+                });
                 setAgroupList(res.data);
             })
             .catch((err) => {

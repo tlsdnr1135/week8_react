@@ -31,9 +31,6 @@ export const Headers = () => {
     const [current, setCurrent] = useState('/regad');
     const navigate = useNavigate();
 
-    // console.log('현재 커런트', current);
-    // console.log('현재 urls', urls);
-    // console.log('현재 url', url.pathname);
     useEffect(() => {
         switch (url.pathname) {
             case '/regad':
@@ -55,7 +52,6 @@ export const Headers = () => {
     }, []);
 
     const moveAdvPage = (e: any) => {
-        console.log('바꾸는 커렌트', e.key);
         setCurrent(e.key);
         navigate(e.key);
     };
@@ -65,7 +61,6 @@ export const Headers = () => {
         localStorage.clear();
         navigate('/login', { replace: true });
     };
-    console.log('헤더 = ', role);
 
     return (
         <>

@@ -6,6 +6,7 @@ import { AdGroupList, ItemListDataType } from '../../DataType/ManageType';
 
 export const ManageAgroup = () => {
     const [itemList, setItemList] = useState<ItemListDataType[]>([]);
+    const [agroup, setAgroup] = useState<AdGroupList>();
     // const [agroupList, setAgroupList] = useState<AdGroupList[]>([]); //그룹 리스트
     return (
         <>
@@ -16,9 +17,14 @@ export const ManageAgroup = () => {
                             <h1 className="fz-32 fc-gray-900">그룹 관리</h1>
                         </div>
                         <div className="content-body">
-                            <AgroupInformation />
+                            <AgroupInformation agroup={agroup!} setAgroup={setAgroup!} />
                             <ItemSearh setItemList={setItemList} />
-                            <ItemList itemList={itemList!} setItemList={setItemList} />
+                            <ItemList
+                                agroup={agroup!}
+                                setAgroup={setAgroup!}
+                                itemList={itemList!}
+                                setItemList={setItemList}
+                            />
                         </div>
                     </div>
                 </div>

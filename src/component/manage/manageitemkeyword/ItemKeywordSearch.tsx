@@ -19,6 +19,11 @@ export const ItemKeywordSearch = ({ setKeywordList }: props) => {
         getkeywordListJoinDadDetFind({ adId: location.state.adId, kwdName: inputKwdName })
             .then((res) => {
                 console.log(res);
+                let index = 1;
+                res.data.forEach((item: KeywordListDataType) => {
+                    item.index = index;
+                    index += 1;
+                });
                 setKeywordList(res.data);
             })
             .catch((err) => {
