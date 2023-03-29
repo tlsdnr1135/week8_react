@@ -38,8 +38,8 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
 
     //csvDataHandle
     const CsvOnClickHandle = () => {
-        let CsvData: AgroupListCsv[];
-        CsvData = agroupList.map((item) => ({
+        // let CsvData: AgroupListCsv[];
+        const CsvData: AgroupListCsv[] = agroupList.map((item) => ({
             key: 0,
             agroupName: item.agroupName,
             agroupUseActYn: item.agroupUseActYn,
@@ -135,7 +135,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
         console.log('--------------------------------------------');
         updateAgroupUseActYn({ agroupName: e.target.value })
             .then((res) => {
-                let temp = agroupList;
+                const temp = agroupList;
                 temp.forEach((item) => {
                     if (item.agroupName === e.target.value) {
                         item.agroupUseActYn = res.data;
@@ -176,7 +176,7 @@ export const AgroupList = ({ agroupList, setAgroupList }: props) => {
             .then((res) => {
                 console.log(res);
                 //2중 포문
-                let temp = agroupList!;
+                const temp = agroupList!;
                 temp.forEach((item) => {
                     checkBoxList.forEach((arr) => {
                         if (item.key === arr) {

@@ -30,7 +30,9 @@ export const ItemSearch = ({ setLevels, setDatas }: ItemSelectParams) => {
             .then((response) => {
                 console.log(response.data);
                 const temp = response.data;
+                let index = 0;
                 temp.forEach((item: DataType) => {
+                    item.id = index;
                     if (item.adultYn === 0) {
                         item.adultYn = 'NO';
                     } else {
@@ -41,6 +43,7 @@ export const ItemSearch = ({ setLevels, setDatas }: ItemSelectParams) => {
                     } else {
                         item.itemActYn = '활성화';
                     }
+                    index += 1;
                 });
                 console.log('상품 조회 response = ', temp);
                 setDatas(temp); //상품 조회 테이블

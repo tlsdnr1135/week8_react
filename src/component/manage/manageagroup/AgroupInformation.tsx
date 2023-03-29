@@ -10,7 +10,6 @@ interface props {
     setAgroup: React.Dispatch<React.SetStateAction<AdGroupList | undefined>>;
 }
 export const AgroupInformation = ({ agroup, setAgroup }: props) => {
-    const navigate = useNavigate();
     const location = useLocation();
     const { updateAgroupName, updateAgroupUseActYn, getAgroupDetails } = AgroupAPIs(); //AgroupAPI
     // const [agroupName, setAgroupname] = useState(location.state.agroupName);
@@ -25,7 +24,6 @@ export const AgroupInformation = ({ agroup, setAgroup }: props) => {
             .then((res) => {
                 console.log('초기화 데이터');
                 console.log(res.data);
-                let temp = res.data;
                 setAgroup(res.data);
                 setAgroupUseActYn(res.data?.agroupUseActYn as number);
             })
@@ -45,7 +43,6 @@ export const AgroupInformation = ({ agroup, setAgroup }: props) => {
     };
     //등록 모달
     const modalHandle = (e: any) => {
-        let temp = true;
         if (e.target.value === 'CANCEL') {
             console.log('취소됐엉');
             setInput('');
@@ -57,7 +54,7 @@ export const AgroupInformation = ({ agroup, setAgroup }: props) => {
                 return;
             }
             console.log(agroup?.agroupName);
-            updateAgroupName({ beforeAgroupName: agroup?.agroupName!, afterAgroupName: input })
+            updateAgroupName({ beforeAgroupName: agroup.agroupName!, afterAgroupName: input })
                 .then((res) => {
                     console.log('현재 닉네임', agroup?.agroupName);
                     console.log('바꿀 닉네임', input);
@@ -69,14 +66,14 @@ export const AgroupInformation = ({ agroup, setAgroup }: props) => {
                 })
                 .catch((err) => {
                     console.log(err);
-                    Modal.error({ content: '이미 존재하는 아이디 입니다' });
+                    Modal.error({ content: '이미 존재하는 광고그룹명 입니다' });
                 });
         }
     };
     //광고주 스위치
     const agroupUseActYnSwitch = (e: any) => {
         console.log(e);
-        updateAgroupUseActYn({ agroupName: agroup?.agroupName! })
+        updateAgroupUseActYn({ agroupName: agroup!.agroupName! })
             .then((res) => {
                 console.log('sdsdsdsdsddsds');
                 console.log(res.data);

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Input, Modal } from 'antd';
-import { Outlet } from 'react-router-dom';
 
 interface props {
     title: string; //타이틀 제목

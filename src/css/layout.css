@@ -199,6 +199,11 @@
     display:inline-block;
     margin-right:8px;
 }
+/* 내가추가 */
+.box-header .box-center > * {
+    display:inline-block;
+    margin-right:8px;
+}
 /* Wrap-Section : End */
 
 

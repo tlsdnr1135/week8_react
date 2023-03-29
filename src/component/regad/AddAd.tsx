@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { APIs } from '../../api/ApiService';
 
 import { KeyWordType, PickButtonType } from '../../DataType/RedAdType';
@@ -17,6 +17,10 @@ export const AddAd = ({ keywordTables, picks, selectGroups }: AddAd) => {
         console.log(picks.id);
         if (selectGroups.value === '광고그룹을 선택해주세요') {
             alert('광고그룹을 선택해주세요');
+            return null;
+        }
+        if (keywordTables.length === 0) {
+            Modal.warning({ content: '키워드를 추가해주세요..!' });
             return null;
         }
         const parameter = {

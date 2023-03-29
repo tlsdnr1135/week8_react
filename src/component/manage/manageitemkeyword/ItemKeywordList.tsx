@@ -53,8 +53,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
     ];
     //csvDataHandle
     const CsvOnClickHandle = () => {
-        let CsvData: KeywordListCsv[];
-        CsvData = keywordList.map((item) => ({
+        const CsvData: KeywordListCsv[] = keywordList.map((item) => ({
             key: 0,
             kwdName: item.kwdName,
             dadUseConfigYn: item.dadUseConfigYn,
@@ -138,7 +137,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
     //keywordTable의 OnOff 단일 변경
     const updateOnOffOne = (e: any) => {
         console.log(e.target.value); //index
-        let temp: number[] = [];
+        const temp: number[] = [];
         temp.push(keywordList[e.target.value].dadDetId);
 
         let yn = keywordList[e.target.value].dadUseConfigYn as number;
@@ -177,7 +176,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
     //테이블 체크박스
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: KeywordListDataType[]) => {
-            let temp: number[] = [];
+            const temp: number[] = [];
             selectedRows.forEach((item) => {
                 temp.push(item.dadDetId as number);
                 console.log(item.dadDetId);
@@ -267,6 +266,7 @@ export const ItemKeywordList = ({ keywordList, setKeywordList }: props) => {
                             >
                                 <span>광고 상품 다운로드</span>
                             </Button>
+                            ZZ
                         </CSVLink>
                     </div>
                 </div>

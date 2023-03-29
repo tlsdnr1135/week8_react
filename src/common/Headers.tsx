@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useLoginStore from '../store/useLoginStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
-import { Button, Divider, Menu, MenuProps, Space, Tabs, TabsProps } from 'antd';
+import { Button, Divider, Menu, MenuProps, Space } from 'antd';
 
 const advItems: MenuProps['items'] = [
     {
@@ -19,8 +19,18 @@ const advItems: MenuProps['items'] = [
 ];
 const adminItems: MenuProps['items'] = [
     {
+        label: '키워드 검수',
+        key: '/confirmkeyword',
+        icon: <i className="ico ico-menu-02" />,
+    },
+    {
         label: '광고 검수',
-        key: '/app',
+        key: '/confirmad',
+        icon: <i className="ico ico-menu-02" />,
+    },
+    {
+        label: '광고 현황',
+        key: '/currentstatead',
         icon: <i className="ico ico-menu-02" />,
     },
 ];
@@ -28,8 +38,14 @@ const adminItems: MenuProps['items'] = [
 export const Headers = () => {
     const url = useLocation();
     const { role, setLogoutHandler } = useLoginStore();
-    const [current, setCurrent] = useState('/regad');
+    const [current, setCurrent] = useState('/');
     const navigate = useNavigate();
+
+    // if (current === '/') {
+    //     console.log('그림 너무 좋아');
+    //     console.log(url.pathname);
+    //     setCurrent(url.pathname);
+    // }
 
     useEffect(() => {
         switch (url.pathname) {
@@ -43,19 +59,31 @@ export const Headers = () => {
                 setCurrent('/managead');
                 break;
             case '/manageitem':
-                setCurrent('/managead');
+                setCurrent('/manageitem');
+                break;
+            case '/confirmkeyword':
+                setCurrent('/confirmkeyword');
+                break;
+            case '/confirmad':
+                setCurrent('/confirmad');
+                break;
+            case '/currentstatead':
+                setCurrent('/currentstatead');
                 break;
             // default:
             //     setCurrent('/regad');
             //     break;
         }
-    }, []);
+    }, [url]);
 
     const moveAdvPage = (e: any) => {
         setCurrent(e.key);
         navigate(e.key);
     };
-    const moveAdminPage = () => {};
+    const moveAdminPage = (e: any) => {
+        setCurrent(e.key);
+        navigate(e.key);
+    };
     const Logout = () => {
         setLogoutHandler();
         localStorage.clear();
@@ -72,7 +100,7 @@ export const Headers = () => {
                     <Menu
                         className="ant-menu-overflow ant-menu ant-menu-root ant-menu-horizontal ant-menu-light css-dev-only-do-not-override-1me4733"
                         onClick={moveAdvPage}
-                        defaultOpenKeys={['regAd']}
+                        defaultOpenKeys={['/regAd']}
                         selectedKeys={[current]}
                         mode="horizontal"
                         items={advItems}
@@ -80,7 +108,9 @@ export const Headers = () => {
                 )}
                 {role === 'ROLE_ADMIN' && (
                     <Menu
-                        onClick={() => navigate('/regadd', { replace: true })}
+                        onClick={moveAdminPage}
+                        // defaultOpenKeys={['/confirmkeyword']}
+                        // defaultValue={'/confirmkeyword'}
                         selectedKeys={[current]}
                         mode="horizontal"
                         items={adminItems}

@@ -27,7 +27,7 @@ export const EnhencedRegAd = () => {
         label: '광고그룹을 선택해주세요',
         value: '광고그룹을 선택해주세요',
     });
-    const [keywordTable, setKeywordTable] = useState<KeyWordType[]>();
+    const [keywordTable, setKeywordTable] = useState<KeyWordType[]>([]);
 
     return (
         <>

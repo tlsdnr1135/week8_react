@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    AdGroupList,
-    AgroupListCsv,
-    ItemListCsv,
-    ItemListDataType,
-} from '../../../DataType/ManageType';
+import { AdGroupList, ItemListCsv, ItemListDataType } from '../../../DataType/ManageType';
 import { Button, Modal, PaginationProps, Table } from 'antd';
 import { CSVLink } from 'react-csv';
 import { ColumnsType } from 'antd/es/table';
@@ -59,8 +54,7 @@ export const ItemList = ({ itemList, setItemList, agroup, setAgroup }: props) =>
 
     //csvDataHandle
     const CsvOnClickHandle = () => {
-        let CsvData: ItemListCsv[];
-        CsvData = itemList.map((item) => ({
+        const CsvData: ItemListCsv[] = itemList.map((item) => ({
             key: 0,
             itemNo: item.itemNo,
             itemName: item.itemName,
@@ -79,7 +73,7 @@ export const ItemList = ({ itemList, setItemList, agroup, setAgroup }: props) =>
     //테이블 체크박스
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: ItemListDataType[]) => {
-            let temp: number[] = [];
+            const temp: number[] = [];
             selectedRows.forEach((item) => {
                 temp.push(item.adId as number);
             });
@@ -173,7 +167,7 @@ export const ItemList = ({ itemList, setItemList, agroup, setAgroup }: props) =>
     //ItemTable의 광고 사용 활성 여부 변경 On/Off (버튼x)
     const itemListTableOnOffChange = (e: any) => {
         console.log(e.target.value);
-        let temp: number[] = [];
+        const temp: number[] = [];
         temp.push(itemList?.[e.target.value].adId);
         updateAdOnOff({ idList: temp, yn: itemList?.[e.target.value].adUseConfigYn == 1 ? 0 : 1 })
             .then((res) => {

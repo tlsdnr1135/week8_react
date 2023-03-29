@@ -30,6 +30,11 @@ export const ItemSearh = ({ setItemList }: props) => {
         })
             .then((res) => {
                 console.log(res.data);
+                let index = 1;
+                res.data.forEach((item: ItemListDataType) => {
+                    item.index = index;
+                    index += 1;
+                });
                 setItemList(res.data);
             })
             .catch((err) => {

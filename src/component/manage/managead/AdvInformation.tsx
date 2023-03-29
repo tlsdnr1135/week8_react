@@ -49,7 +49,7 @@ export const AdvInformation = ({ adv, setAdv }: props) => {
     };
     //광고주 스위치
     const advSwitch = (e: boolean) => {
-        let adIngActYn = e ? 1 : 0;
+        const adIngActYn = e ? 1 : 0;
         updateAdvAdIngActYn({ name: localStorage.getItem('ID') as string, adIngActYn: adIngActYn })
             .then((res) => {
                 const temp = adv;
@@ -71,7 +71,7 @@ export const AdvInformation = ({ adv, setAdv }: props) => {
         if (e.target.value === 'CANCEL') {
             setInput('');
         } else {
-            let cost = parseInt(input);
+            const cost = parseInt(input);
             //100원 단위가 아닐경우
             if (cost % 100 != 0) {
                 Modal.error({
@@ -90,6 +90,7 @@ export const AdvInformation = ({ adv, setAdv }: props) => {
                     temp!.dayLimitBudget = cost;
                     procAdvMngType(temp!);
                     setAdv({ ...temp! });
+                    Modal.info({ content: '변경 되었습니다' });
                 })
                 .catch((err) => {
                     console.log(err);

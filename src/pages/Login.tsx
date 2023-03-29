@@ -10,7 +10,7 @@ const onFinish = (values: any) => {
 
 export const Login = () => {
     const { setLoginedHandler } = useLoginAction();
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const loginForm = {
         email: '',
@@ -52,7 +52,7 @@ export const Login = () => {
 
                 setLoginedHandler(email);
 
-                navigate('/regadd', { replace: true });
+                navigate('/', { replace: true });
             })
             .catch((error) => {
                 console.log(error);

@@ -5,7 +5,7 @@ import { KeyWordType } from '../../DataType/RedAdType';
 
 interface AgroupSelecter {
     keywordTables: KeyWordType[];
-    setKeywordTables: React.Dispatch<React.SetStateAction<KeyWordType[] | undefined>>;
+    setKeywordTables: React.Dispatch<React.SetStateAction<KeyWordType[]>>;
 }
 export const KeywordList = ({ keywordTables, setKeywordTables }: AgroupSelecter) => {
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
@@ -21,7 +21,7 @@ export const KeywordList = ({ keywordTables, setKeywordTables }: AgroupSelecter)
     };
     const KeyWordHandleOk = () => {
         //Input가져오기
-        let temp = {
+        const temp = {
             kwdName: keyWord,
             bidCost: bidCost,
         };
@@ -36,7 +36,7 @@ export const KeywordList = ({ keywordTables, setKeywordTables }: AgroupSelecter)
 
         //초기에 값이 없으면 배열 만들어주기
         if (keywordTables == null) {
-            let temparr = [];
+            const temparr = [];
             temparr.push(temp);
             setKeywordTables(temparr);
         } else {

@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Login } from './pages/Login';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Adv from './pages/Adv';
 import useLoginStore from './store/useLoginStore';
 import { Manage } from './pages/adv/Manage';
 
-import { Sample } from './pages/admin/Sample';
+import { Confirm } from './pages/admin/Confirm';
 import { EnhencedRegAd } from './pages/adv/EnhencedRegAd';
 import { Admin } from './pages/Admin';
 import { ManageAd } from './component/manage/ManageAd';
 import { ManageAgroup } from './component/manage/ManageAgroup';
 import { ManageItem } from './component/manage/ManageItem';
+import { ConfirmAd } from './component/confirm/ConfirmAd';
+import { ConfirmKeyword } from './component/confirm/ConfirmKeyword';
+import { CurrentStateAd } from './component/confirm/CurrentStateAd';
 
 export const App = () => {
     const { role, setLogined } = useLoginStore();
@@ -32,7 +35,7 @@ export const App = () => {
         <>
             {userIsLoggedIn ? (
                 <Routes>
-                    //로그인 했을 때
+                    {/* 로그인 했을 때 */}
                     {role === 'ROLE_ADV' && (
                         <Route element={<Adv />}>
                             <Route path="/regad" element={<EnhencedRegAd />} />
@@ -40,15 +43,18 @@ export const App = () => {
                                 <Route path="/managead" element={<ManageAd />} />
                                 <Route path="/manageagroup" element={<ManageAgroup />} />
                                 <Route path="/manageitem" element={<ManageItem />} />
-                                {/*<Route path="/manage"*/}
                             </Route>
                             <Route path="/*" element={<Navigate replace to="/regad" />} />
                         </Route>
                     )}
                     {role === 'ROLE_ADMIN' && (
                         <Route element={<Admin />}>
-                            <Route path="/admin" element={<Sample />} />
-                            <Route path="/*" element={<Navigate replace to="/admin" />} />
+                            <Route element={<Confirm />}>
+                                <Route path={'/confirmkeyword'} element={<ConfirmKeyword />} />
+                                <Route path={'/confirmad'} element={<ConfirmAd />} />
+                                <Route path={'/currentstatead'} element={<CurrentStateAd />} />
+                            </Route>
+                            <Route path="/*" element={<Navigate replace to="/confirmkeyword" />} />
                         </Route>
                     )}
                 </Routes>

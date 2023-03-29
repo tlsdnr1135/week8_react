@@ -25,7 +25,7 @@ export const AgroupSelecter = ({
     };
     const handleOk = () => {
         //셀렉트 박스 추가
-        let temp = {
+        const temp = {
             key: 1,
             value: input,
             label: input,
