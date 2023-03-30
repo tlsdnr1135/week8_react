@@ -5,20 +5,12 @@ import { ColumnsType } from 'antd/es/table';
 import { KeyWordAPIs } from '../../../api/KeyWordAPIs';
 import { AgroupListCsv } from '../../../DataType/ManageType';
 import { CSVLink } from 'react-csv';
+import { setIndex } from './ConfirmKeywordSearch';
 
 interface props {
     keywordList: keywordList[];
     setKeywordList: React.Dispatch<React.SetStateAction<keywordList[]>>;
 }
-
-const setIndex = (res: keywordList[]) => {
-    let index = 1;
-    res.forEach((item: keywordList) => {
-        item.index = index;
-        index += 1;
-    });
-    return res;
-};
 
 export const ConfirmkeywordList = ({ keywordList, setKeywordList }: props) => {
     const { getKeywordListManual, updateKeywordManual, updateKeywordManualOff } = KeyWordAPIs(); //API

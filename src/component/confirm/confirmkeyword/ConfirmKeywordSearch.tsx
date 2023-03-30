@@ -6,6 +6,14 @@ import { keywordList } from '../../../DataType/ConfirmType';
 interface props {
     setKeywordList: React.Dispatch<React.SetStateAction<keywordList[]>>;
 }
+export const setIndex = (res: any) => {
+    let index = 1;
+    res.forEach((item: any) => {
+        item.index = index;
+        index += 1;
+    });
+    return res;
+};
 export const ConfirmKeywordSearch = ({ setKeywordList }: props) => {
     const { getKeywordListManual } = KeyWordAPIs(); //API
     const [input, setInput] = useState(''); //인풋
@@ -16,12 +24,8 @@ export const ConfirmKeywordSearch = ({ setKeywordList }: props) => {
         getKeywordListManual({ keywordName: input })
             .then((res) => {
                 console.log(res);
-                let index = 1;
-                res.data.forEach((item: keywordList) => {
-                    item.index = index;
-                    index += 1;
-                });
-                setKeywordList(res.data);
+                const data = setIndex(res.data);
+                setKeywordList(data);
             })
             .catch((err) => {
                 console.log(err);

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { ConfirmAdSearch } from './confirmad/ConfirmAdSearch';
-import { ConfirmAdListType } from '../../DataType/ConfirmType';
+import { confirmAdListType } from '../../DataType/ConfirmType';
 import { ConfirmAdList } from './confirmad/ConfirmAdList';
 
 export const ConfirmAd = () => {
-    const [confirmAdList, setConfirmAdList] = useState<ConfirmAdListType[]>([]); //키워드 리스트
+    const [confirmAdList, setConfirmAdList] = useState<confirmAdListType[]>([]); //키워드 리스트
     return (
         <>
             <main className="ant-layout-content css-dev-only-do-not-override-1me4733">
@@ -14,8 +14,11 @@ export const ConfirmAd = () => {
                             <h1 className="fz-32 fc-gray-900">광고 검수</h1>
                         </div>
                         <div className="content-body">
-                            <ConfirmAdSearch></ConfirmAdSearch>
-                            <ConfirmAdList></ConfirmAdList>
+                            <ConfirmAdSearch setConfirmAdList={setConfirmAdList} />
+                            <ConfirmAdList
+                                confirmAdList={confirmAdList}
+                                setConfirmAdList={setConfirmAdList}
+                            ></ConfirmAdList>
                         </div>
                     </div>
                 </div>

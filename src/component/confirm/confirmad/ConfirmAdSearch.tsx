@@ -1,8 +1,29 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'antd';
+import { confirmAdListType } from '../../../DataType/ConfirmType';
+import { DadDetAPIs } from '../../../api/DadDetAPIs';
+import { setIndex } from '../confirmkeyword/ConfirmKeywordSearch';
 
-export const ConfirmAdSearch = () => {
+interface props {
+    setConfirmAdList: React.Dispatch<React.SetStateAction<confirmAdListType[]>>;
+}
+export const ConfirmAdSearch = ({ setConfirmAdList }: props) => {
+    const { getDaddetListsJoinAdkwdItem } = DadDetAPIs(); //API
     const [input, setInput] = useState(''); //인풋
+
+    //키워드 조회 버튼
+    const confirmAdListSearchButton = () => {
+        getDaddetListsJoinAdkwdItem({ kwdName: input })
+            .then((res) => {
+                console.log(res);
+                const data = setIndex(res.data);
+                setConfirmAdList(data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return (
         <>
             <section className="wrap-section wrap-tbl">
@@ -47,7 +68,7 @@ export const ConfirmAdSearch = () => {
                             type="primary"
                             className="pink"
                             size={'large'}
-                            // onClick={keywordSearchButton}
+                            onClick={confirmAdListSearchButton}
                         >
                             <span>키워드 조회</span>
                         </Button>
