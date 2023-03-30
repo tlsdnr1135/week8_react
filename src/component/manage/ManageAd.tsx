@@ -5,7 +5,7 @@ import { AdGroupList, AdvMngType } from '../../DataType/ManageType';
 import { Button, Input, Modal, Switch } from 'antd';
 import { AdvInformation } from './managead/AdvInformation';
 import { AgroupSearch } from './managead/AgroupSearch';
-import { AgroupList } from './managead/agroupList';
+import { AgroupList } from './managead/AgroupList';
 import { AgroupAPIs } from '../../api/AgroupAPIs';
 
 export const ManageAd = () => {

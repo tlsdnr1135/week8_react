@@ -1,6 +1,4 @@
 import API from './ApiService';
-import React from 'react';
-import { ItemListDataType } from '../DataType/ManageType';
 
 //Keyword
 export const KeyWordAPIs = () => ({
@@ -12,6 +10,24 @@ export const KeyWordAPIs = () => ({
                 kwdName: parameter.kwdName,
             },
         }),
+    //키워드 리스트(admin)
+    getKeywordListManual: (parameter: { keywordName: string }) =>
+        API.get('/api/keyword/find/manual', {
+            params: {
+                keywordName: parameter.keywordName,
+            },
+        }),
+    //키워드 업데이트(admin, Manual)
+    updateKeywordManual: (parameter: { keywordName: string }) =>
+        API.put('/api/keyword/update/manual', {
+            keywordName: parameter.keywordName,
+        }),
+    //키워드 업데이트(admin, Manual)
+    updateKeywordManualOff: (parameter: { id: number }) =>
+        API.put('/api/keyword/manual/off', {
+            id: parameter.id,
+        }),
+
     //OnOff버튼(AdUseConfigYn, DadUseConfigYn)
     updateDadUseConfigYnOnOffAll: (parameter: { idList: number[]; yn: number }) =>
         API.put('/api/daddet/update/dadusecofingyn', {

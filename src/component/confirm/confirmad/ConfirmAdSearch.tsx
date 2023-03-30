@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Input } from 'antd';
 
-export const Confirmkeywordsearch = () => {
+export const ConfirmAdSearch = () => {
+    const [input, setInput] = useState(''); //인풋
     return (
         <>
             <section className="wrap-section wrap-tbl">
                 <div className="box-header">
                     <div className="box-left">
                         <div className="box-left">
-                            <h2 className="fz-24 fc-gray-700">검수 키워드 조회</h2>
+                            <h2 className="fz-24 fc-gray-700">검수 대상 키워드 조회</h2>
                         </div>
                     </div>
                 </div>
@@ -28,8 +29,8 @@ export const Confirmkeywordsearch = () => {
                                             placeholder="키워드명을 입력해주세요."
                                             className="ant-input css-dev-only-do-not-override-1me4733"
                                             type="text"
-                                            // value={inputKwdName}
-                                            // onChange={inputKwdNameHandle}
+                                            value={input}
+                                            onChange={(e) => setInput(e.currentTarget.value)}
                                             style={{ width: '500px' }}
                                         />
                                     </div>
@@ -44,9 +45,9 @@ export const Confirmkeywordsearch = () => {
                     <div className="box-center">
                         <Button
                             type="primary"
-                            className="ant-btn css-dev-only-do-not-override-1me4733 ant-btn-primary ant-btn-lg pink "
-                            value={1}
-                            // onClick={ketwordListSearchButton}
+                            className="pink"
+                            size={'large'}
+                            // onClick={keywordSearchButton}
                         >
                             <span>키워드 조회</span>
                         </Button>
