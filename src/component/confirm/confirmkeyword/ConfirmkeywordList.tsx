@@ -83,8 +83,10 @@ export const ConfirmkeywordList = ({ keywordList, setKeywordList }: props) => {
     const columns: ColumnsType<keywordList> = [
         {
             title: '키워드 명',
-            align: 'left',
-            render: (record) => <span>{record.kwdName}</span>,
+            align: 'center',
+            render: (record) => (
+                <span style={{ display: 'block', textAlign: 'left' }}>{record.kwdName}</span>
+            ),
         },
         {
             title: '검수 키워드 삭제',

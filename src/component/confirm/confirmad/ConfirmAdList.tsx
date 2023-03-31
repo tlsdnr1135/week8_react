@@ -10,14 +10,15 @@ interface props {
     setConfirmAdList: React.Dispatch<React.SetStateAction<confirmAdListType[]>>;
 }
 export const ConfirmAdList = ({ confirmAdList, setConfirmAdList }: props) => {
-    const { getDaddetListsJoinAdkwdItem } = DadDetAPIs(); //API
+    const { getDadDetListsJoinAdkwdItem, updateConfirmReject, updateConfirmApproval } =
+        DadDetAPIs(); //API
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [isModalOpen, setIsModalOpen] = useState(false); //모달
     const [confirmData, setConfirmData] = useState<confirmAdListType>();
 
     //초기 세팅
     useEffect(() => {
-        getDaddetListsJoinAdkwdItem({ kwdName: '' })
+        getDadDetListsJoinAdkwdItem({ kwdName: '' })
             .then((res) => {
                 console.log(res);
                 const data = setIndex(res.data);
@@ -28,11 +29,42 @@ export const ConfirmAdList = ({ confirmAdList, setConfirmAdList }: props) => {
             });
     }, []);
 
-    //검수 처리 버튼
+    //검수 버튼
     const confirmButton = (record: confirmAdListType) => {
         setConfirmData(record);
         setIsModalOpen(true);
-        console.log('sd');
+    };
+
+    //모달 핸들
+    const modalHandle = async (state: boolean) => {
+        if (state) {
+            console.log('승인입니다.');
+            //승인
+            try {
+                await updateConfirmApproval({
+                    dadDetId: confirmData?.key,
+                    cnrReqId: confirmData?.cnrReqId,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        } else {
+            console.log('반려입니다.');
+            //반려
+            try {
+                await updateConfirmReject({
+                    dadDetId: confirmData?.key,
+                    cnrReqId: confirmData?.cnrReqId,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        const res = await getDadDetListsJoinAdkwdItem({ kwdName: '' });
+        const data = setIndex(res.data);
+        setConfirmAdList(data);
+        Modal.info({ content: '검수 처리가 되었습니다.' });
+        setIsModalOpen(false);
     };
 
     //테이블 컬럼
@@ -40,20 +72,28 @@ export const ConfirmAdList = ({ confirmAdList, setConfirmAdList }: props) => {
         {
             title: '상품 명',
             key: 'itemName',
-            align: 'left',
-            render: (record) => <span>{record.itemName}</span>,
+            align: 'center',
+            render: (record) => (
+                <span style={{ display: 'block', textAlign: 'left' }}>{record.itemName}</span>
+            ),
         },
         {
             title: '키워드 명',
             key: 'kwdName',
-            align: 'left',
-            render: (record) => <span>{record.kwdName}</span>,
+            align: 'center',
+            render: (record) => (
+                <span style={{ display: 'block', textAlign: 'left' }}>{record.kwdName}</span>
+            ),
         },
         {
             title: '검수 사유',
             key: 'kwdName',
-            align: 'left',
-            render: (record) => <span>검수 대상 키워드 : {record.kwdName}</span>,
+            align: 'center',
+            render: (record) => (
+                <span style={{ display: 'block', textAlign: 'left' }}>
+                    검수 대상 키워드 : {record.kwdName}
+                </span>
+            ),
         },
         {
             title: '검수 처리',
@@ -105,7 +145,7 @@ export const ConfirmAdList = ({ confirmAdList, setConfirmAdList }: props) => {
                         type="primary"
                         className="gray"
                         size={'large'}
-                        // onClick={() => modalHandle(false)}
+                        onClick={() => modalHandle(false)}
                     >
                         <span>반려</span>
                     </Button>,
@@ -114,7 +154,7 @@ export const ConfirmAdList = ({ confirmAdList, setConfirmAdList }: props) => {
                         type="primary"
                         className="pink"
                         size={'large'}
-                        // onClick={() => modalHandle(true)}
+                        onClick={() => modalHandle(true)}
                     >
                         <span>승인</span>
                     </Button>,

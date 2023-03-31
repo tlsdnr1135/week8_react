@@ -12,7 +12,14 @@ export interface confirmAdListType {
     index: number;
     itemName: string;
     kwdName: number;
-    cnrReqid: number; //검수 요청 아이디
+    cnrReqId: number; //검수 요청 아이디
+}
+//광고 현황 리스트
+export interface currenStateAdListType {
+    key: number; //DadDetId
+    itemName: string;
+    kwdName: string;
+    adultYn: number;
 }
 //csv
 export interface keywordListCsv {

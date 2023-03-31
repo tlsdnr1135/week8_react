@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, message, PaginationProps, Table } from 'antd';
+import { Button, message, Modal, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { AgroupSelecterType, DataType, PickButtonType } from '../../DataType/RedAdType';
 import { AgroupAPIs } from '../../api/AgroupAPIs';
@@ -22,6 +22,12 @@ export const ItemTable = ({
     const { getAgroupSelectBoxList } = AgroupAPIs();
 
     const pickButton = (record: DataType) => {
+        console.log('sdsdsdsd');
+        if (record.itemActYn === '비활성화') {
+            Modal.warning({ content: '비활성화' });
+            setLevels(1);
+            return null;
+        }
         //선택 시 광고그룹 셀렉터BOX 불러오기
         getAgroupSelectBoxList()
             .then((response) => {

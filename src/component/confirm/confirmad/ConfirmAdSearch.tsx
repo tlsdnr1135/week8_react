@@ -8,12 +8,12 @@ interface props {
     setConfirmAdList: React.Dispatch<React.SetStateAction<confirmAdListType[]>>;
 }
 export const ConfirmAdSearch = ({ setConfirmAdList }: props) => {
-    const { getDaddetListsJoinAdkwdItem } = DadDetAPIs(); //API
+    const { getDadDetListsJoinAdkwdItem } = DadDetAPIs(); //API
     const [input, setInput] = useState(''); //인풋
 
     //키워드 조회 버튼
     const confirmAdListSearchButton = () => {
-        getDaddetListsJoinAdkwdItem({ kwdName: input })
+        getDadDetListsJoinAdkwdItem({ kwdName: input })
             .then((res) => {
                 console.log(res);
                 const data = setIndex(res.data);
