@@ -8,11 +8,13 @@ import { requestTaskListType, taskReportListType } from '../../../DataType/Confi
 interface props {
     setRequestReportList: React.Dispatch<React.SetStateAction<requestTaskListType[]>>;
 }
+
 export const RequestTask = ({ setRequestReportList }: props) => {
     const { saveFiles } = TaskReportAPIs(); //API
     const [input, setInput] = useState(''); //인풋
     const [fileList, setFileList] = useState<UploadFile[]>([]); //파일 리스트
     const [uploading, setUploading] = useState(false); //업로드 상태
+    const [file, setFile] = useState<UploadFile>(); //업로드 상태
 
     //업로드 버튼
     const handleUpload = () => {
@@ -21,12 +23,12 @@ export const RequestTask = ({ setRequestReportList }: props) => {
         fileList.forEach((file) => {
             console.log('파일 넣기', file);
             formData.append('files[]', file as RcFile);
-            console.log('폼 데이터 forEach 안', formData);
+            console.log('폼 데이터 forEach 안s', file);
         });
         setUploading(true);
         console.log('폼 데이터', formData);
 
-        saveFiles({ formData: fileList })
+        saveFiles({ formData: file! })
             .then((res) => res.data())
             .then(() => {
                 setFileList([]);
@@ -83,13 +85,14 @@ export const RequestTask = ({ setRequestReportList }: props) => {
         beforeUpload: (file) => {
             console.log(file);
             console.log(file.uid);
+            setFile(file);
             setFileList([...fileList, file]);
 
             return false;
         },
         fileList,
     };
-
+    // let sdas = sdsa;
     return (
         <>
             <section className="wrap-section wrap-tbl">
