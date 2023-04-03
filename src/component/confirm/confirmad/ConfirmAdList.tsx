@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Input, Modal, PaginationProps, Table } from 'antd';
-import { confirmAdListType } from '../../../DataType/ConfirmType';
-import { DadDetAPIs } from '../../../api/DadDetAPIs';
-import { setIndex } from '../confirmkeyword/ConfirmKeywordSearch';
+import { Button, Modal, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import React, { useEffect, useState } from 'react';
+import { DadDetAPIs } from '../../../api/DadDetAPIs';
+import { confirmAdListType } from '../../../DataType/ConfirmType';
+import { setIndex } from '../confirmkeyword/ConfirmKeywordSearch';
 
 interface props {
     confirmAdList: confirmAdListType[];

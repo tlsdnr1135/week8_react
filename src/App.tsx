@@ -14,6 +14,7 @@ import { ManageItem } from './component/manage/ManageItem';
 import { ConfirmAd } from './component/confirm/ConfirmAd';
 import { ConfirmKeyword } from './component/confirm/ConfirmKeyword';
 import { CurrentStateAd } from './component/confirm/CurrentStateAd';
+import { ManageBulk } from './component/confirm/ManageBulk';
 
 export const App = () => {
     const { role, setLogined } = useLoginStore();
@@ -53,6 +54,7 @@ export const App = () => {
                                 <Route path={'/confirmkeyword'} element={<ConfirmKeyword />} />
                                 <Route path={'/confirmad'} element={<ConfirmAd />} />
                                 <Route path={'/currentstatead'} element={<CurrentStateAd />} />
+                                <Route path={'/managebulk'} element={<ManageBulk />} />
                             </Route>
                             <Route path="/*" element={<Navigate replace to="/confirmkeyword" />} />
                         </Route>

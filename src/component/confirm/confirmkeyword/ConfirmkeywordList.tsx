@@ -1,10 +1,9 @@
-import React, { ChangeEventHandler, useEffect, useState } from 'react';
 import { Button, Input, Modal, PaginationProps, Table } from 'antd';
-import { keywordList, keywordListCsv } from '../../../DataType/ConfirmType';
 import { ColumnsType } from 'antd/es/table';
-import { KeyWordAPIs } from '../../../api/KeyWordAPIs';
-import { AgroupListCsv } from '../../../DataType/ManageType';
+import React, { useEffect, useState } from 'react';
 import { CSVLink } from 'react-csv';
+import { KeyWordAPIs } from '../../../api/KeyWordAPIs';
+import { keywordList } from '../../../DataType/ConfirmType';
 import { setIndex } from './ConfirmKeywordSearch';
 
 interface props {
@@ -92,7 +91,7 @@ export const ConfirmkeywordList = ({ keywordList, setKeywordList }: props) => {
             title: '검수 키워드 삭제',
             key: 'action',
             align: 'center',
-            render: (value, record, index) => (
+            render: (value, record) => (
                 <Button
                     className={'pink'}
                     size={'large'}

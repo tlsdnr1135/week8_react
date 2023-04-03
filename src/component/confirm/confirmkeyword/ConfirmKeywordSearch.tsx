@@ -1,5 +1,5 @@
-import React, { ChangeEvent, ChangeEventHandler, useState } from 'react';
 import { Button, Input } from 'antd';
+import React, { useState } from 'react';
 import { KeyWordAPIs } from '../../../api/KeyWordAPIs';
 import { keywordList } from '../../../DataType/ConfirmType';
 

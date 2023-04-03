@@ -1,7 +1,6 @@
 import React from 'react';
-import { ConfirmAdSearch } from './confirmad/ConfirmAdSearch';
-import { ConfirmAdList } from './confirmad/ConfirmAdList';
-import { CurrentStateAdList } from './currentstatead/CurrentStateAdList';
+import { CurrentStateAdGraph } from './currentstatead/currentStateAdGraph';
+import { CurrentStateAdList } from './currentstatead/currentStateAdList';
 
 export const CurrentStateAd = () => {
     return (
@@ -14,6 +13,7 @@ export const CurrentStateAd = () => {
                         {/*</div>*/}
                         <div className="content-body">
                             <CurrentStateAdList />
+                            <CurrentStateAdGraph />
                         </div>
                     </div>
                 </div>

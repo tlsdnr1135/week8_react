@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Headers } from '../../common/Headers';
-import { Footers } from '../../common/Footers';
+import { Headers } from '../../component/common/Headers';
+import { Footers } from '../../component/common/Footers';
 import { Outlet } from 'react-router-dom';
 import { Button, Input, Modal, PaginationProps, Select, Table } from 'antd';
 import { ItemSearch } from '../../component/regad/ItemSearch';

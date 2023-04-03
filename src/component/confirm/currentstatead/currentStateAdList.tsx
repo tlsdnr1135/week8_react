@@ -73,7 +73,7 @@ export const CurrentStateAdList = () => {
                         columns={columns}
                         dataSource={currentStateAdList}
                         pagination={{
-                            total: currentStateAdList?.length,
+                            total: currentStateAdList.length,
                             showTotal: showTotal,
                             size: 'default',
                         }}

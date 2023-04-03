@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useLoginStore from '../store/useLoginStore';
+import useLoginStore from '../../store/useLoginStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
 import { Button, Divider, Menu, MenuProps, Space } from 'antd';
@@ -26,6 +26,11 @@ const adminItems: MenuProps['items'] = [
     {
         label: '광고 검수',
         key: '/confirmad',
+        icon: <i className="ico ico-menu-02" />,
+    },
+    {
+        label: '대량 관리',
+        key: '/managebulk',
         icon: <i className="ico ico-menu-02" />,
     },
     {
@@ -66,6 +71,9 @@ export const Headers = () => {
                 break;
             case '/confirmad':
                 setCurrent('/confirmad');
+                break;
+            case '/managebulk':
+                setCurrent('/managebulk');
                 break;
             case '/currentstatead':
                 setCurrent('/currentstatead');
