@@ -15,7 +15,10 @@ export const ManageBulk = () => {
                         </div>
                         <div className="content-body">
                             <RequestTask setRequestReportList={setRequestReportList} />
-                            <RequestTaskInfo requestReportList={requestReportList} />
+                            <RequestTaskInfo
+                                requestReportList={requestReportList}
+                                setRequestReportList={setRequestReportList}
+                            />
                         </div>
                     </div>
                 </div>

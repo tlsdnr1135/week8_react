@@ -1,5 +1,4 @@
 import axios from 'axios';
-import React, { useState } from 'react';
 import { KeyWordType } from '../DataType/RedAdType';
 
 //헤더
@@ -8,6 +7,13 @@ export const API = axios.create({
     headers: {
         ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
         'Content-Type': 'application/json',
+    },
+});
+export const APIFILE = axios.create({
+    baseURL: 'http://localhost:8080',
+    headers: {
+        ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
+        'Content-Type': 'multipart/form-data',
     },
 });
 

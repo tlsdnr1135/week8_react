@@ -1,5 +1,4 @@
-import { Button, Input, message, Upload, UploadFile, UploadProps } from 'antd';
-import { RcFile } from 'antd/es/upload';
+import { Button, Input, Modal, Upload, UploadFile, UploadProps } from 'antd';
 import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { TaskReportAPIs } from '../../../api/taskReportAPIs';
@@ -10,54 +9,13 @@ interface props {
 }
 
 export const RequestTask = ({ setRequestReportList }: props) => {
-    const { saveFiles } = TaskReportAPIs(); //API
-    const [input, setInput] = useState(''); //인풋
+    const { saveFiles, getTaskRequestLists } = TaskReportAPIs(); //API
+    const [inputFileName, setInputFileName] = useState(''); //인풋 파일네임
+    const [inputTaskName, setInputTaskName] = useState(''); //인풋 작업명
     const [fileList, setFileList] = useState<UploadFile[]>([]); //파일 리스트
     const [uploading, setUploading] = useState(false); //업로드 상태
-    const [file, setFile] = useState<UploadFile>(); //업로드 상태
+    const [file, setFile] = useState<UploadFile>();
 
-    //업로드 버튼
-    const handleUpload = () => {
-        console.log('파일 리스트', fileList);
-        const formData = new FormData();
-        fileList.forEach((file) => {
-            console.log('파일 넣기', file);
-            formData.append('files[]', file as RcFile);
-            console.log('폼 데이터 forEach 안s', file);
-        });
-        setUploading(true);
-        console.log('폼 데이터', formData);
-
-        saveFiles({ formData: file! })
-            .then((res) => res.data())
-            .then(() => {
-                setFileList([]);
-                message.success('upload successfully.');
-            })
-            .catch(() => {
-                message.error('upload failed.');
-            })
-            .finally(() => {
-                setUploading(false);
-            });
-
-        // You can use any AJAX library you like
-        // fetch('http://localhost:8080/api/v1/files', {
-        //     method: 'POST',
-        //     body: formData,
-        // })
-        //     .then((res) => res.json())
-        //     .then(() => {
-        //         setFileList([]);
-        //         message.success('upload successfully.');
-        //     })
-        //     .catch(() => {
-        //         message.error('upload failed.');
-        //     })
-        //     .finally(() => {
-        //         setUploading(false);
-        //     });
-    };
     //csvData
     const csvData: taskReportListType[] = [];
     //csv
@@ -71,28 +29,54 @@ export const RequestTask = ({ setRequestReportList }: props) => {
         { label: '광고비', key: 'adCost' },
     ];
 
-    //upload
+    //업로드 버튼
+    const handleUpload = async () => {
+        console.log('파일 리스트', fileList);
+
+        if (inputTaskName.length === 0) {
+            Modal.warning({ content: '작업 명을 입력해 주세요' });
+            return null;
+        }
+
+        try {
+            const res1 = await saveFiles({ formData: file!, taskName: inputTaskName });
+            console.log(res1);
+            setInputTaskName('');
+            setInputFileName('');
+            setUploading(false);
+            setFileList([]);
+            Modal.info({ content: '성공!!' });
+            const list = await getTaskRequestLists();
+            setRequestReportList(list.data);
+        } catch (e) {
+            console.log(e);
+            Modal.error({ content: '실패ㅠㅠㅠㅠ' });
+        }
+    };
+
+    //upload 핸들
     const upLoadProps: UploadProps = {
-        onChange: (info) => {
-            console.log(info);
+        onChange: (file) => {
+            console.log(file);
+            setInputFileName(file.file.name);
         },
         onRemove: (file) => {
-            const index = fileList.indexOf(file);
-            const newFileList = fileList.slice();
-            newFileList.splice(index, 1);
-            setFileList(newFileList);
+            // const index = fileList.indexOf(file);
+            // const newFileList = fileList.slice();
+            // newFileList.splice(index, 1);
+            setFileList([]);
         },
         beforeUpload: (file) => {
-            console.log(file);
-            console.log(file.uid);
             setFile(file);
-            setFileList([...fileList, file]);
+            const temp: UploadFile[] = [];
+            temp.push(file);
+            setFileList([...temp]);
 
             return false;
         },
         fileList,
     };
-    // let sdas = sdsa;
+
     return (
         <>
             <section className="wrap-section wrap-tbl">
@@ -122,12 +106,7 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                                             headers={headers}
                                             filename={`요청용 템플릿`}
                                         >
-                                            <Button
-                                                type="primary"
-                                                className="pink"
-                                                size={'large'}
-                                                // onClick={keywordSearchButton}
-                                            >
+                                            <Button type="primary" className="pink" size={'large'}>
                                                 <span>템플릿 다운로드</span>
                                             </Button>
                                         </CSVLink>
@@ -152,14 +131,21 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                                         <Input
                                             name="itemName"
                                             placeholder="파일을 업로드해주세요"
+                                            disabled={true}
                                             type="text"
-                                            value={input}
-                                            onChange={(e) => setInput(e.currentTarget.value)}
+                                            value={inputFileName}
+                                            onChange={(e) =>
+                                                setInputFileName(e.currentTarget.value)
+                                            }
                                             style={{ width: '500px' }}
                                         />
                                     </div>
                                     <div className="box-left">
-                                        <Upload className="pink" {...upLoadProps}>
+                                        <Upload
+                                            className="pink"
+                                            {...upLoadProps}
+                                            showUploadList={false}
+                                        >
                                             <Button
                                                 type="primary"
                                                 style={{ margin: '10px' }}
@@ -188,8 +174,10 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                                             placeholder="작업명을 입력해주세요"
                                             className="ant-input css-dev-only-do-not-override-1me4733"
                                             type="text"
-                                            // value={input}
-                                            // onChange={(e) => setInput(e.currentTarget.value)}
+                                            value={inputTaskName}
+                                            onChange={(e) =>
+                                                setInputTaskName(e.currentTarget.value)
+                                            }
                                             style={{ width: '500px' }}
                                         />
                                     </div>
@@ -206,18 +194,23 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                             type="primary"
                             className="gray"
                             size={'large'}
-                            // onClick={keywordSearchButton}
+                            onClick={() => {
+                                setInputFileName('');
+                                setInputTaskName('');
+                                setFileList([]);
+                            }}
                         >
                             <span>취소</span>
                         </Button>
                         <Button
                             type="primary"
+                            className="pink"
+                            size={'large'}
                             onClick={handleUpload}
                             disabled={fileList.length === 0}
                             loading={uploading}
-                            style={{ marginTop: 16 }}
                         >
-                            {uploading ? 'Uploading' : 'Start Upload'}
+                            <span>요청</span>
                         </Button>
                     </div>
                 </div>
