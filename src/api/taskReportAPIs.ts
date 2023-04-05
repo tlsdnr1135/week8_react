@@ -20,5 +20,10 @@ export const TaskReportAPIs = () => ({
         }),
     //
     //파일 다운로드
-    getFileDownload: () => API.get('/api/v1/down/files'),
+    getFileDownload: (parameter: { fileName: string }) =>
+        API.get('/api/v1/down/files', {
+            params: {
+                fileName: parameter.fileName,
+            },
+        }),
 });

@@ -92,7 +92,7 @@ export const RequestTaskInfo = ({ requestReportList, setRequestReportList }: pro
                         size={'large'}
                         // download={'/test1.txt'}
                         // href={'Data '}
-                        onClick={() => downloadHandle()}
+                        onClick={() => downloadHandle(record)}
                     >
                         다운로드
                     </Button>
@@ -103,27 +103,47 @@ export const RequestTaskInfo = ({ requestReportList, setRequestReportList }: pro
         },
     ];
 
-    const downloadHandle = async () => {
-        const axiosResponse = await getFileDownload();
+    // const downloadHandle = async () => {
+    //     try {
+    //         const axiosResponse = await getFileDownload();
+    //
+    //         console.log('111111111111111111111111');
+    //         console.log(axiosResponse);
+    //         const aElement = document.createElement('a');
+    //         const blobFile = window.URL.createObjectURL(new Blob([axiosResponse.data]));
+    //         aElement.href = blobFile;
+    //
+    //         const contentDisposition: string = axiosResponse.headers['content-disposition'];
+    //         if (contentDisposition) {
+    //             // X이부분은 참고하지말자 너무 위험하다..X
+    //             const filename = contentDisposition.split(';')[1].trim().split('=');
+    //             // 파일명 설정
+    //             aElement.download = filename[1];
+    //         }
+    //         document.body.appendChild(aElement);
+    //         aElement.click();
+    //         setTimeout(() => {
+    //             // 이제 더이상 필요 없으니 생성한 a태그를 1초후 삭제 시켜준다.
+    //             aElement.remove();
+    //         }, 1000);
+    //     } catch (e) {
+    //         console.log('헤헤');
+    //     }
+    // };
 
-        console.log('111111111111111111111111');
-        console.log(axiosResponse);
-        const aElement = document.createElement('a');
+    const downloadHandle = async (record: requestTaskListType) => {
+        console.log('바뀐거', record.taskName);
+        const axiosResponse = await getFileDownload({ fileName: record.taskName });
         const blobFile = window.URL.createObjectURL(new Blob([axiosResponse.data]));
-        aElement.href = blobFile;
+        const download = document.createElement('a');
 
-        const contentDisposition: string = axiosResponse.headers['content-disposition'];
-        if (contentDisposition) {
-            // X이부분은 참고하지말자 너무 위험하다..X
-            const filename = contentDisposition.split(';')[1].trim().split('=');
-            // 파일명 설정
-            aElement.download = filename[1];
-        }
-        document.body.appendChild(aElement);
-        aElement.click();
+        download.href = blobFile;
+        download.setAttribute('download', record.taskName + '.csv');
+        download.setAttribute('type', 'text/csv');
+        download.click();
         setTimeout(() => {
             // 이제 더이상 필요 없으니 생성한 a태그를 1초후 삭제 시켜준다.
-            aElement.remove();
+            download.remove();
         }, 1000);
     };
 
@@ -132,7 +152,7 @@ export const RequestTaskInfo = ({ requestReportList, setRequestReportList }: pro
             <section className="wrap-section wrap-datagrid">
                 <div className="box-header">
                     <div className="box-left">
-                        <a href={'http://localhost:8080/api/v1/down/files'}>테스트 다운로드</a>
+                        {/*<a onClick={downloadHandle}>테스트 다운로드</a>*/}
                         <h2 className="fz-24 fc-gray-700">작업 요청 내역</h2>
                     </div>
                     <div className="box-right"></div>

@@ -50,7 +50,7 @@ export const RequestTask = ({ setRequestReportList }: props) => {
             setRequestReportList(list.data);
         } catch (e) {
             console.log(e);
-            Modal.error({ content: '실패ㅠㅠㅠㅠ' });
+            Modal.error({ content: '이미 같은 작업명이 있어용!' });
         }
     };
 
