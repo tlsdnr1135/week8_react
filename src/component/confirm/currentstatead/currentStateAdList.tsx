@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Button, PaginationProps, Table } from 'antd';
-import { AdAPIs } from '../../../api/AdAPIs';
-import { confirmAdListType, currenStateAdListType } from '../../../DataType/ConfirmType';
+import { PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import React, { useEffect, useState } from 'react';
+import { AdAPIs } from '../../../api/AdAPIs';
+import { DadReportAPIs } from '../../../api/DadReportAPIs';
+import { currenStateAdListType, taskReportListType } from '../../../DataType/ConfirmType';
 
-export const CurrentStateAdList = () => {
+interface props {
+    setLevel: React.Dispatch<React.SetStateAction<number>>;
+    setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
+}
+export const CurrentStateAdList = ({ setLevel, setDadReportList }: props) => {
+    const { getListsByDadDetId } = DadReportAPIs();
     const { findCurrentStateAdLists } = AdAPIs(); //API
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [currentStateAdList, setCurrentStateAdList] = useState<currenStateAdListType[]>([]);
@@ -13,7 +19,8 @@ export const CurrentStateAdList = () => {
     useEffect(() => {
         findCurrentStateAdLists()
             .then((res) => {
-                console.log(res);
+                console.log(res.data);
+
                 setCurrentStateAdList(res.data);
             })
             .catch((err) => {
@@ -36,7 +43,27 @@ export const CurrentStateAdList = () => {
             key: 'kwdName',
             align: 'center',
             render: (record) => (
-                <span style={{ display: 'block', textAlign: 'left' }}>{record.itemName}</span>
+                <a
+                    style={{ display: 'block', textAlign: 'left', color: 'dodgerblue' }}
+                    onClick={async () => {
+                        setLevel(1);
+
+                        try {
+                            const res = await getListsByDadDetId({ id: 26 });
+                            res.data.forEach((item: taskReportListType) => {
+                                console.log(item.adCost);
+                                item.DescAdCost = item.adCost
+                                    .toString()
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            });
+                            setDadReportList(res.data);
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }}
+                >
+                    {record.itemName}
+                </a>
             ),
         },
         {
