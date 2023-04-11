@@ -6,22 +6,21 @@ import { DadReportAPIs } from '../../../api/DadReportAPIs';
 import { currenStateAdListType, taskReportListType } from '../../../DataType/ConfirmType';
 
 interface props {
-    setLevel: React.Dispatch<React.SetStateAction<number>>;
     setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
     seItemName: React.Dispatch<React.SetStateAction<string>>;
 }
-export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: props) => {
-    const { getListsByDadDetId } = DadReportAPIs();
+
+export const CurrentStateAdList = ({ setDadReportList, seItemName }: props) => {
+    const { getListsByDadDetId } = DadReportAPIs(); //API
     const { findCurrentStateAdLists } = AdAPIs(); //API
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
     const [currentStateAdList, setCurrentStateAdList] = useState<currenStateAdListType[]>([]);
 
-    //초기 세팅
+    //초기 세팅( 작업 요청 폼 )
     useEffect(() => {
         findCurrentStateAdLists()
             .then((res) => {
                 console.log(res.data);
-
                 setCurrentStateAdList(res.data);
             })
             .catch((err) => {
@@ -33,7 +32,6 @@ export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: p
     const columns: ColumnsType<currenStateAdListType> = [
         {
             title: '직접광고 상세 ID',
-            key: 'itemName',
             align: 'center',
             render: (record) => (
                 <span style={{ display: 'block', textAlign: 'left' }}>{record.key}</span>
@@ -41,24 +39,22 @@ export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: p
         },
         {
             title: '상품 명',
-            key: 'kwdName',
             align: 'center',
             render: (record) => (
                 <a
                     style={{ display: 'block', textAlign: 'left', color: 'dodgerblue' }}
                     onClick={async () => {
-                        setLevel(1);
-
                         try {
                             const res = await getListsByDadDetId({ id: record.key });
                             res.data.forEach((item: taskReportListType) => {
+                                //광고비에 , 찍기
                                 console.log(item.adCost);
                                 item.DescAdCost = item.adCost
                                     .toString()
                                     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                             });
-                            seItemName(record.itemName);
-                            setDadReportList(res.data);
+                            seItemName(record.itemName); //넘겨줄 아이템 이름.
+                            setDadReportList(res.data); //작업 요청 내역 리스트
                         } catch (e) {
                             console.log(e);
                         }
@@ -70,7 +66,6 @@ export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: p
         },
         {
             title: '키워드 명',
-            key: 'kwdName',
             align: 'center',
             render: (record) => (
                 <span style={{ display: 'block', textAlign: 'left' }}>{record.kwdName}</span>
@@ -78,7 +73,6 @@ export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: p
         },
         {
             title: '성인 여부',
-            key: 'action',
             align: 'center',
             render: (value, record, index) => (
                 <span style={{ display: 'block', textAlign: 'left' }}>

@@ -5,7 +5,6 @@ import { CurrentStateAdList } from './currentstatead/currentStateAdList';
 import { CurrentStateAdReportList } from './currentstatead/currentStateAdReportList';
 
 export const CurrentStateAd = () => {
-    const [level, setLevel] = useState(0);
     const [itemName, seItemName] = useState('');
     const [dadReportList, setDadReportList] = useState<taskReportListType[]>([]);
 
@@ -20,10 +19,9 @@ export const CurrentStateAd = () => {
                         <div className="content-body">
                             <CurrentStateAdList
                                 seItemName={seItemName}
-                                setLevel={setLevel}
                                 setDadReportList={setDadReportList}
                             />
-                            {level === 1 ? (
+                            {dadReportList.length != 0 ? (
                                 <CurrentStateAdGraph
                                     itemName={itemName}
                                     dadReportList={dadReportList}
@@ -32,7 +30,7 @@ export const CurrentStateAd = () => {
                             ) : (
                                 <div></div>
                             )}
-                            {level === 1 ? (
+                            {dadReportList.length != 0 ? (
                                 <CurrentStateAdReportList dadReportList={dadReportList} />
                             ) : (
                                 <div></div>

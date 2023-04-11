@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { requestTaskListType } from '../../DataType/ConfirmType';
-import { RequestTask } from './managebulk/RequestTask';
-import { RequestTaskInfo } from './managebulk/RequestTaskInfo';
+import { RequestTask } from './managebulk/requestTask';
+import { RequestTaskInfo } from './managebulk/requestTaskInfo';
 
 export const ManageBulk = () => {
     const [requestReportList, setRequestReportList] = useState<requestTaskListType[]>([]);

@@ -7,6 +7,7 @@ import { taskReportListType } from '../../../DataType/ConfirmType';
 interface props {
     dadReportList: taskReportListType[];
 }
+
 export const CurrentStateAdReportList = ({ dadReportList }: props) => {
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
 
@@ -95,7 +96,7 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
                             type="primary"
                             data={dadReportList}
                             headers={headers}
-                            filename={`검수 키워드 리스트`}
+                            filename={`광고 현황`}
                         >
                             <Button
                                 type="primary"
@@ -103,7 +104,7 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
                                 size={'large'}
                                 value={'CANCEL'}
                             >
-                                <span>키워드 다운로드</span>
+                                <span>다운로드</span>
                             </Button>
                         </CSVLink>
                     </div>

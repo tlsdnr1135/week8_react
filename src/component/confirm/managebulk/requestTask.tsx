@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { TaskReportAPIs } from '../../../api/taskReportAPIs';
 import { requestTaskListType, taskReportListType } from '../../../DataType/ConfirmType';
+import { descTaskStatus } from './requestTaskInfo';
 
 interface props {
     setRequestReportList: React.Dispatch<React.SetStateAction<requestTaskListType[]>>;
@@ -13,8 +14,8 @@ export const RequestTask = ({ setRequestReportList }: props) => {
     const [inputFileName, setInputFileName] = useState(''); //인풋 파일네임
     const [inputTaskName, setInputTaskName] = useState(''); //인풋 작업명
     const [fileList, setFileList] = useState<UploadFile[]>([]); //파일 리스트
-    const [uploading, setUploading] = useState(false); //업로드 상태
-    const [file, setFile] = useState<UploadFile>();
+    // const [uploading, setUploading] = useState(false); //업로드 상태
+    const [file, setFile] = useState<UploadFile>(); //파일
 
     //csvData
     const csvData: taskReportListType[] = [];
@@ -41,12 +42,13 @@ export const RequestTask = ({ setRequestReportList }: props) => {
         try {
             const res1 = await saveFiles({ formData: file!, taskName: inputTaskName });
             console.log(res1);
-            setInputTaskName('');
-            setInputFileName('');
-            setUploading(false);
+            setInputTaskName(''); //인풋 작업명 초기화
+            setInputFileName(''); //인풋 요청 파일 업로드 초기화
+            // setUploading(false); //업로드 상태 false
             setFileList([]);
             Modal.info({ content: '성공!!' });
-            const list = await getTaskRequestLists();
+            const list = await getTaskRequestLists(); //데이터 리셋
+            descTaskStatus(list.data);
             setRequestReportList(list.data);
         } catch (e) {
             console.log(e);
@@ -57,21 +59,21 @@ export const RequestTask = ({ setRequestReportList }: props) => {
     //upload 핸들
     const upLoadProps: UploadProps = {
         onChange: (file) => {
+            console.log('파일 변경');
             console.log(file);
             setInputFileName(file.file.name);
         },
-        onRemove: (file) => {
-            // const index = fileList.indexOf(file);
-            // const newFileList = fileList.slice();
-            // newFileList.splice(index, 1);
-            setFileList([]);
-        },
+        // onRemove: (file) => {
+        //     console.log('파일 지움');
+        //     setFileList([]);
+        // },
         beforeUpload: (file) => {
+            //파일 리스트에 있는걸로 상태 확인..
+            console.log('파일 업로드');
             setFile(file);
             const temp: UploadFile[] = [];
             temp.push(file);
             setFileList([...temp]);
-
             return false;
         },
         fileList,
@@ -151,7 +153,6 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                                                 style={{ margin: '10px' }}
                                                 className="pink"
                                                 size={'large'}
-                                                // onClick={keywordSearchButton}
                                             >
                                                 <span>업로드</span>
                                             </Button>
@@ -208,7 +209,7 @@ export const RequestTask = ({ setRequestReportList }: props) => {
                             size={'large'}
                             onClick={handleUpload}
                             disabled={fileList.length === 0}
-                            loading={uploading}
+                            // loading={uploading}
                         >
                             <span>요청</span>
                         </Button>

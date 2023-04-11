@@ -8,6 +8,7 @@ interface props {
     setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
     itemName: string;
 }
+
 //셀렉터 라벨
 const selector = [
     { value: 'showCount', label: '노출 수' },
@@ -31,6 +32,8 @@ export const CurrentStateAdGraph = ({ dadReportList, setDadReportList, itemName 
     };
 
     //그래프
+    //meta가 선에 나오는 것 -> 메타에 따라 legend 텍스트가 나옴
+    //legend 아래에 있는 두칸짜리
     const config: any = {
         data: [dadReportList, dadReportList],
         xField: 'date',
@@ -72,7 +75,6 @@ export const CurrentStateAdGraph = ({ dadReportList, setDadReportList, itemName 
             },
             position: 'bottom',
         },
-
         geometryOptions: [
             {
                 geometry: 'line',
