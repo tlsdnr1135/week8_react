@@ -8,8 +8,9 @@ import { currenStateAdListType, taskReportListType } from '../../../DataType/Con
 interface props {
     setLevel: React.Dispatch<React.SetStateAction<number>>;
     setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
+    seItemName: React.Dispatch<React.SetStateAction<string>>;
 }
-export const CurrentStateAdList = ({ setLevel, setDadReportList }: props) => {
+export const CurrentStateAdList = ({ setLevel, setDadReportList, seItemName }: props) => {
     const { getListsByDadDetId } = DadReportAPIs();
     const { findCurrentStateAdLists } = AdAPIs(); //API
     const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
@@ -49,13 +50,14 @@ export const CurrentStateAdList = ({ setLevel, setDadReportList }: props) => {
                         setLevel(1);
 
                         try {
-                            const res = await getListsByDadDetId({ id: 26 });
+                            const res = await getListsByDadDetId({ id: record.key });
                             res.data.forEach((item: taskReportListType) => {
                                 console.log(item.adCost);
                                 item.DescAdCost = item.adCost
                                     .toString()
                                     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                             });
+                            seItemName(record.itemName);
                             setDadReportList(res.data);
                         } catch (e) {
                             console.log(e);

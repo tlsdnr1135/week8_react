@@ -6,6 +6,7 @@ import { taskReportListType } from '../../../DataType/ConfirmType';
 interface props {
     dadReportList: taskReportListType[];
     setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
+    itemName: string;
 }
 //셀렉터 라벨
 const selector = [
@@ -15,7 +16,7 @@ const selector = [
     { value: 'avgCpc', label: '평균 클릭 비용' },
     { value: 'adCost', label: '광고 비용' },
 ];
-export const CurrentStateAdGraph = ({ dadReportList, setDadReportList }: props) => {
+export const CurrentStateAdGraph = ({ dadReportList, setDadReportList, itemName }: props) => {
     const [selectorOne, setSelectorOne] = useState('showCount');
     const [selectorTwo, setSelectorTwo] = useState('clickCount');
 
@@ -34,9 +35,44 @@ export const CurrentStateAdGraph = ({ dadReportList, setDadReportList }: props) 
         data: [dadReportList, dadReportList],
         xField: 'date',
         yField: [selectorOne, selectorTwo],
+        meta: {
+            showCount: {
+                alias: '노출 수',
+            },
+            clickCount: {
+                alias: '클릭 수',
+            },
+            avgShowRank: {
+                alias: '평균 노출 순위',
+            },
+            avgCpc: {
+                alias: '평균 클릭 비용',
+            },
+            adCost: {
+                alias: '광고 비용',
+            },
+        },
         legend: {
+            itemName: {
+                formatter: (text: string, item: any) => {
+                    switch (text) {
+                        case '노출 수':
+                            return (item.value = '노출 수');
+                        case '클릭 수':
+                            return (item.value = '클릭 수');
+                        case '평균 노출 순위':
+                            return (item.value = '평균 노출 순위');
+                        case '평균 클릭 비용':
+                            return (item.value = '평균 클릭 비용');
+                        case '광고 비용':
+                            return (item.value = '광고 비용');
+                    }
+                    console.log('그래프 안 레전드 : ', text);
+                },
+            },
             position: 'bottom',
         },
+
         geometryOptions: [
             {
                 geometry: 'line',
@@ -48,13 +84,12 @@ export const CurrentStateAdGraph = ({ dadReportList, setDadReportList }: props) 
             },
         ],
     };
-    console.log('config : ', config);
     return (
         <>
             <section className="wrap-section wrap-datagrid">
                 <div className="box-header">
                     <div className="box-left">
-                        <h2 className="fz-24 fc-gray-700">!!!나중에 상품명!!!</h2>
+                        <h2 className="fz-24 fc-gray-700">{itemName}</h2>
                     </div>
                     <div className="box-right">
                         <Select

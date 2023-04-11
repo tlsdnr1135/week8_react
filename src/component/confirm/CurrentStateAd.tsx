@@ -6,6 +6,7 @@ import { CurrentStateAdReportList } from './currentstatead/currentStateAdReportL
 
 export const CurrentStateAd = () => {
     const [level, setLevel] = useState(0);
+    const [itemName, seItemName] = useState('');
     const [dadReportList, setDadReportList] = useState<taskReportListType[]>([]);
 
     return (
@@ -18,11 +19,13 @@ export const CurrentStateAd = () => {
                         {/*</div>*/}
                         <div className="content-body">
                             <CurrentStateAdList
+                                seItemName={seItemName}
                                 setLevel={setLevel}
                                 setDadReportList={setDadReportList}
                             />
                             {level === 1 ? (
                                 <CurrentStateAdGraph
+                                    itemName={itemName}
                                     dadReportList={dadReportList}
                                     setDadReportList={setDadReportList}
                                 />
