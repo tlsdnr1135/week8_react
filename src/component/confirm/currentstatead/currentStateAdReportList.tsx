@@ -2,7 +2,7 @@ import { Button, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { CSVLink } from 'react-csv';
-import { taskReportListType } from '../../../DataType/ConfirmType';
+import { taskReportListType } from '../../../DataType/confirmType';
 
 interface props {
     dadReportList: taskReportListType[];

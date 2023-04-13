@@ -1,5 +1,5 @@
 import { UploadFile } from 'antd';
-import API, { APIFILE } from './ApiService';
+import API, { APIFILE } from './apiService';
 
 export const TaskReportAPIs = () => ({
     //파일 저장하기

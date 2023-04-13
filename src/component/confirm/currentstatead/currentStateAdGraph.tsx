@@ -1,11 +1,10 @@
 import DualAxesChart from '@ant-design/plots/es/components/dual-axes';
 import { Select } from 'antd';
 import React, { useState } from 'react';
-import { taskReportListType } from '../../../DataType/ConfirmType';
+import { taskReportListType } from '../../../DataType/confirmType';
 
 interface props {
     dadReportList: taskReportListType[];
-    setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;
     itemName: string;
 }
 
@@ -17,9 +16,9 @@ const selector = [
     { value: 'avgCpc', label: '평균 클릭 비용' },
     { value: 'adCost', label: '광고 비용' },
 ];
-export const CurrentStateAdGraph = ({ dadReportList, setDadReportList, itemName }: props) => {
-    const [selectorOne, setSelectorOne] = useState('showCount');
-    const [selectorTwo, setSelectorTwo] = useState('clickCount');
+export const CurrentStateAdGraph = ({ dadReportList, itemName }: props) => {
+    const [selectorOne, setSelectorOne] = useState<string>('showCount');
+    const [selectorTwo, setSelectorTwo] = useState<string>('clickCount');
 
     //셀렉터 핸들
     const selectorOneHandleChange = (value: string) => {

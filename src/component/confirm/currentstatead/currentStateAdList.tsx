@@ -1,9 +1,9 @@
 import { PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
-import { AdAPIs } from '../../../api/AdAPIs';
-import { DadReportAPIs } from '../../../api/DadReportAPIs';
-import { currenStateAdListType, taskReportListType } from '../../../DataType/ConfirmType';
+import { AdAPIs } from '../../../api/adAPIs';
+import { DadReportAPIs } from '../../../api/dadReportAPIs';
+import { currenStateAdListType, taskReportListType } from '../../../DataType/confirmType';
 
 interface props {
     setDadReportList: React.Dispatch<React.SetStateAction<taskReportListType[]>>;

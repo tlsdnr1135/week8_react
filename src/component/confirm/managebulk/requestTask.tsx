@@ -2,7 +2,7 @@ import { Button, Input, Modal, Upload, UploadFile, UploadProps } from 'antd';
 import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { TaskReportAPIs } from '../../../api/taskReportAPIs';
-import { requestTaskListType, taskReportListType } from '../../../DataType/ConfirmType';
+import { requestTaskListType, taskReportListType } from '../../../DataType/confirmType';
 import { descTaskStatus } from './requestTaskInfo';
 
 interface props {
@@ -11,10 +11,9 @@ interface props {
 
 export const RequestTask = ({ setRequestReportList }: props) => {
     const { saveFiles, getTaskRequestLists } = TaskReportAPIs(); //API
-    const [inputFileName, setInputFileName] = useState(''); //인풋 파일네임
-    const [inputTaskName, setInputTaskName] = useState(''); //인풋 작업명
+    const [inputFileName, setInputFileName] = useState<string>(''); //인풋 파일네임
+    const [inputTaskName, setInputTaskName] = useState<string>(''); //인풋 작업명
     const [fileList, setFileList] = useState<UploadFile[]>([]); //파일 리스트
-    // const [uploading, setUploading] = useState(false); //업로드 상태
     const [file, setFile] = useState<UploadFile>(); //파일
 
     //csvData

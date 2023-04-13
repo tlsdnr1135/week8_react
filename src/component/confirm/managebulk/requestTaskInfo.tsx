@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { TaskReportAPIs } from '../../../api/taskReportAPIs';
-import { requestTaskListType } from '../../../DataType/ConfirmType';
+import { requestTaskListType } from '../../../DataType/confirmType';
 
 interface props {
     requestReportList: requestTaskListType[];
@@ -96,12 +96,15 @@ export const RequestTaskInfo = ({ requestReportList, setRequestReportList }: pro
     const downloadHandle = async (record: requestTaskListType) => {
         console.log('바뀐거', record.taskName);
         const axiosResponse = await getFileDownload({ fileName: record.taskName });
-        const blobFile = window.URL.createObjectURL(new Blob([axiosResponse.data]));
+        console.log('리턴: ', '\ufeff' + axiosResponse.data);
+        const blobFile = window.URL.createObjectURL(
+            new Blob(['\ufeff' + axiosResponse.data], { type: 'text/csv;charset=utf-8;' })
+        );
         const download = document.createElement('a');
 
         download.href = blobFile;
         download.setAttribute('download', record.taskName + '.csv');
-        download.setAttribute('type', 'text/csv');
+        download.setAttribute('Content-type', 'text/plain; charset=UTF-8');
         download.click();
         setTimeout(() => {
             // 이제 더이상 필요 없으니 생성한 a태그를 1초후 삭제 시켜준다.

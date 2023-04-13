@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
-import { Login } from './pages/Login';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Adv from './pages/Adv';
-import useLoginStore from './store/useLoginStore';
-import { Manage } from './pages/adv/Manage';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { ConfirmAd } from './component/confirm/confirmAd';
+import { ConfirmKeyword } from './component/confirm/confirmKeyword';
+import { CurrentStateAd } from './component/confirm/currentStateAd';
+import { ManageBulk } from './component/confirm/manageBulk';
+import { ManageAd } from './component/manage/manageAd';
+import { ManageAgroup } from './component/manage/manageAgroup';
+import { ManageItem } from './component/manage/manageItem';
+import { Admin } from './pages/admin';
 
-import { Confirm } from './pages/admin/Confirm';
-import { EnhencedRegAd } from './pages/adv/EnhencedRegAd';
-import { Admin } from './pages/Admin';
-import { ManageAd } from './component/manage/ManageAd';
-import { ManageAgroup } from './component/manage/ManageAgroup';
-import { ManageItem } from './component/manage/ManageItem';
-import { ConfirmAd } from './component/confirm/ConfirmAd';
-import { ConfirmKeyword } from './component/confirm/ConfirmKeyword';
-import { CurrentStateAd } from './component/confirm/CurrentStateAd';
-import { ManageBulk } from './component/confirm/ManageBulk';
+import { Confirm } from './pages/admin/confirm';
+import Adv from './pages/adv';
+import { EnhencedRegAd } from './pages/adv/enhencedRegAd';
+import { Manage } from './pages/adv/manage';
+import { Login } from './pages/login';
+import useLoginStore from './store/useLoginStore';
 
 export const App = () => {
     const { role, setLogined } = useLoginStore();
