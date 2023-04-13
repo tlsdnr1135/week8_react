@@ -104,7 +104,7 @@ export const RequestTaskInfo = ({ requestReportList, setRequestReportList }: pro
 
         download.href = blobFile;
         download.setAttribute('download', record.taskName + '.csv');
-        download.setAttribute('Content-type', 'text/plain; charset=UTF-8');
+        download.setAttribute('Content-type', 'text/csv; charset=x-windows-949');
         download.click();
         setTimeout(() => {
             // 이제 더이상 필요 없으니 생성한 a태그를 1초후 삭제 시켜준다.

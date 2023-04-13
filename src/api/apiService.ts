@@ -13,7 +13,7 @@ export const APIFILE = axios.create({
     baseURL: 'http://localhost:8080',
     headers: {
         ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
-        'Content-Type': 'multipart/form-data; charset=UTF-8',
+        'Content-Type': 'multipart/form-data; charset=x-windows-949',
         // charset: 'utf-8',
         // 'Content-Encoding': 'utf-8',
     },
