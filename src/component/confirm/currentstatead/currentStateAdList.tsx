@@ -10,7 +10,7 @@ interface props {
     seItemName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-//소수점 계산과 광고비
+//소수점 계산과 광고비 -> csv에도 보여야함.
 const makeFixed = (data: taskReportListType[]) => {
     data.forEach((item) => {
         item.DescFixedAvgShowRank = item.avgShowRank.toFixed(1);
@@ -27,11 +27,11 @@ const makeFooter = (data: taskReportListType[]) => {
     let adCost = 0; //광고비
     let avgShowRank = 0; //반올림 1자리
     let avgCpc = 0; //소수점 x
-
-    let clickRate = ''; //클릭 율
-    let DescAvgShowRank = ''; //계산 - 평균 노출 수
-    let DescAvgCpc = ''; //계산 - 평균 클릭 수
-    let DescAdCost = ''; //계산 - 평균 광고 비용
+    //
+    // let clickRate = ''; //클릭 율
+    // let DescAvgShowRank = ''; //계산 - 평균 노출 수
+    // let DescAvgCpc = ''; //계산 - 평균 클릭 수
+    // let DescAdCost = ''; //계산 - 평균 광고 비용
 
     data.forEach((item: taskReportListType) => {
         showCount += item.showCount;
@@ -41,11 +41,10 @@ const makeFooter = (data: taskReportListType[]) => {
         avgCpc += item.avgCpc;
     });
 
-    clickRate = ((clickCount / showCount) * 100).toFixed(1); //클릭 율
-    DescAvgShowRank = (avgShowRank / data.length).toFixed(1); //평균 노출 순위
-    DescAvgCpc = (avgCpc / data.length).toFixed(0);
-    DescAdCost = adCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //광고 비용
-    avgCpc = Math.round(avgCpc / data.length); //평균 클릭 비용
+    const clickRate = ((clickCount / showCount) * 100).toFixed(1); //클릭 율 -> 합계
+    const DescAvgShowRank = (avgShowRank / data.length).toFixed(1); //평균 노출 순위
+    const DescAvgCpc = (avgCpc / data.length).toFixed(0);
+    const DescAdCost = adCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //광고 비용
 
     const items: taskReportListType = {
         dadDetId: '합계',
