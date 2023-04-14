@@ -40,13 +40,20 @@ export interface requestTaskListType {
 export interface taskReportListType {
     key: number;
     date: string; //날짜
-    dadDetId: number; //직접 광고 상세 ID
+    dadDetId: number | string; //직접 광고 상세 ID
     showCount: number; //노출 수
     clickCount: number; //클릭 수
-    clickRate: number; //클릭율
     avgShowRank: number; //평균 노출 순위
     avgCpc: number; //평균 클릭 비용
-    adCost: string; //광고 비용
+    adCost: number; //광고 비용
+    // ---------------------------------
+    DescFixedAvgShowRank: string;
+    DescFixedAvgCpc: string;
+    DescFixedAdCost: string;
+    // ----------------------------------
+    clickRate: number; //클릭율
+    DescAvgShowRank: string;
+    DescAvgCpc: string;
     DescAdCost: string;
 }
 

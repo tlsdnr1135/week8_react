@@ -9,7 +9,7 @@ interface props {
 }
 
 export const CurrentStateAdReportList = ({ dadReportList }: props) => {
-    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`; //페이지 네이션
+    const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total - 1} items`; //페이지 네이션
 
     //csv
     const headers = [
@@ -18,9 +18,9 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
         { label: '노출 수', key: 'showCount' },
         { label: '클릭 수', key: 'clickCount' },
         { label: '클릭율', key: 'clickRate' },
-        { label: '평균 노출 순위', key: 'avgShowRank' },
-        { label: '평균 클릭 비용', key: 'avgCpc' },
-        { label: '광고 비용', key: 'adCost' },
+        { label: '평균 노출 순위', key: 'DescFixedAvgShowRank' },
+        { label: '평균 클릭 비용', key: 'DescFixedAvgCpc' },
+        { label: '광고 비용', key: 'DescFixedAdCost' },
     ];
 
     // 테이블 컬럼
@@ -67,21 +67,27 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
             title: '평균 노출 순위',
             align: 'center',
             render: (record) => (
-                <span style={{ display: 'block', textAlign: 'left' }}>{record.avgShowRank}</span>
+                <span style={{ display: 'block', textAlign: 'left' }}>
+                    {record.DescFixedAvgShowRank}
+                </span>
             ),
         },
         {
             title: '평균 클릭 비용',
             align: 'center',
             render: (record) => (
-                <span style={{ display: 'block', textAlign: 'left' }}>{record.avgCpc}</span>
+                <span style={{ display: 'block', textAlign: 'left' }}>
+                    {record.DescFixedAvgCpc}
+                </span>
             ),
         },
         {
             title: '광고비',
             align: 'center',
             render: (record) => (
-                <span style={{ display: 'block', textAlign: 'left' }}>{record.DescAdCost}</span>
+                <span style={{ display: 'block', textAlign: 'left' }}>
+                    {record.DescFixedAdCost}
+                </span>
             ),
         },
     ];
@@ -118,56 +124,6 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
                             total: dadReportList?.length,
                             showTotal: showTotal,
                             size: 'default',
-                        }}
-                        summary={(items) => {
-                            let showCount = 0;
-                            let clickCount = 0;
-                            let clickRate = '';
-                            let avgShowRank = 0; //반올림 2자리
-                            let DescAvgShowRank = '';
-                            let avgCpc = 0; //소수점 x
-                            let adCost = 0;
-                            let DescAdCost = '';
-                            items.forEach((item) => {
-                                showCount += item.showCount;
-                                clickCount += item.clickCount;
-                                avgShowRank += item.avgShowRank;
-                                avgCpc += item.avgCpc;
-                                adCost += parseInt(item.adCost);
-                            });
-                            DescAdCost = adCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //광고 비용
-                            DescAvgShowRank = (avgShowRank / items.length).toFixed(1); //평균 노출 순위
-                            avgCpc = Math.round(avgCpc / items.length); //평균 클릭 비용
-                            clickRate = ((clickCount / showCount) * 100).toFixed(1); //클릭 율
-
-                            return (
-                                <>
-                                    <Table.Summary fixed>
-                                        <Table.Summary.Row>
-                                            <Table.Summary.Cell index={0}>합계</Table.Summary.Cell>
-                                            <Table.Summary.Cell index={1}>-</Table.Summary.Cell>
-                                            <Table.Summary.Cell index={2}>
-                                                {showCount}
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={3}>
-                                                {clickCount}
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={4}>
-                                                {clickRate}%
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={5}>
-                                                {DescAvgShowRank}
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={6}>
-                                                {avgCpc}
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={7}>
-                                                {DescAdCost}
-                                            </Table.Summary.Cell>
-                                        </Table.Summary.Row>
-                                    </Table.Summary>
-                                </>
-                            );
                         }}
                         bordered
                     />
