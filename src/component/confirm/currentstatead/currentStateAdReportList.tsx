@@ -58,9 +58,7 @@ export const CurrentStateAdReportList = ({ dadReportList }: props) => {
             title: '클릭 율',
             align: 'center',
             render: (record) => (
-                <span style={{ display: 'block', textAlign: 'left' }}>
-                    {((record.clickCount / record.showCount) * 100).toFixed(1)}%
-                </span>
+                <span style={{ display: 'block', textAlign: 'left' }}>{record.clickRate}%</span>
             ),
         },
         {

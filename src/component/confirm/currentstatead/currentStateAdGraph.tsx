@@ -29,11 +29,21 @@ export const CurrentStateAdGraph = ({ dadReportList, itemName }: props) => {
         console.log('셀렉터 밸류 :', value);
         setSelectorTwo(value);
     };
+    //셀렉터 값이 바뀌면 그 셀렉터 값의 value의 행을 뽑아낸다!!!(배열로 미리 만들어 놓기?)
 
     //그래프
     //meta가 선에 나오는 것 -> 메타에 따라 legend 텍스트가 나옴
     //legend 아래에 있는 두칸짜리
+    // const temp1 = [
+    //     { showCount: 5, avgShowRank: 10, date: 12 },
+    //     { showCount: 4, avgShowRank: 20, date: 13 },
+    // ];
+    // const temp2 = [
+    //     { clickCount: 5, date: 12 },
+    //     { clickCount: 1, date: 13 },
+    // ];
     const config: any = {
+        // data: [temp1, temp2],
         data: [dadReportList, dadReportList],
         xField: 'date',
         yField: [selectorOne, selectorTwo],

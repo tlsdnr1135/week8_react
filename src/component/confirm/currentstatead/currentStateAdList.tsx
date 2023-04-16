@@ -14,8 +14,9 @@ interface props {
 const makeFixed = (data: taskReportListType[]) => {
     data.forEach((item) => {
         item.DescFixedAvgShowRank = item.avgShowRank.toFixed(1);
-        item.DescFixedAvgCpc = item.avgCpc.toFixed(1);
+        item.DescFixedAvgCpc = item.avgCpc.toFixed(0);
         item.DescFixedAdCost = item.adCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        item.clickRate = parseInt(((item.clickCount / item.showCount) * 100).toFixed(1));
     });
     return data;
 };
@@ -27,11 +28,6 @@ const makeFooter = (data: taskReportListType[]) => {
     let adCost = 0; //광고비
     let avgShowRank = 0; //반올림 1자리
     let avgCpc = 0; //소수점 x
-    //
-    // let clickRate = ''; //클릭 율
-    // let DescAvgShowRank = ''; //계산 - 평균 노출 수
-    // let DescAvgCpc = ''; //계산 - 평균 클릭 수
-    // let DescAdCost = ''; //계산 - 평균 광고 비용
 
     data.forEach((item: taskReportListType) => {
         showCount += item.showCount;
@@ -47,6 +43,7 @@ const makeFooter = (data: taskReportListType[]) => {
     const DescAdCost = adCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //광고 비용
 
     const items: taskReportListType = {
+        key: 0, //키
         dadDetId: '합계',
         date: '-',
         showCount: showCount, //노출 수
@@ -55,15 +52,11 @@ const makeFooter = (data: taskReportListType[]) => {
         avgCpc: avgCpc, //평균 클릭 비용
         adCost: adCost, //광고비
         //----------------------
-        DescFixedAvgShowRank: '',
-        DescFixedAvgCpc: '',
-        DescFixedAdCost: '',
-        // --------------------------------------------------------------
         clickRate: parseInt(clickRate), //클릭율
-        DescAvgShowRank: DescAvgShowRank,
-        DescAvgCpc: DescAvgCpc,
-        DescAdCost: DescAdCost, //광고비 ,
-        key: 0, //키
+        DescFixedAvgShowRank: DescAvgShowRank,
+        DescFixedAvgCpc: DescAvgCpc,
+        DescFixedAdCost: DescAdCost,
+        // --------------------------------------------------------------
     };
 
     return items;
@@ -110,6 +103,7 @@ export const CurrentStateAdList = ({ setDadReportList, seItemName }: props) => {
                             res.data.push(makeFooter(data));
                             seItemName(record.itemName); //넘겨줄 아이템 이름.
                             setDadReportList(res.data); //작업 요청 내역 리스트
+                            console.log(res.data);
                         } catch (e) {
                             console.log(e);
                         }

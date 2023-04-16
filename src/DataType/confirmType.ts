@@ -52,9 +52,6 @@ export interface taskReportListType {
     DescFixedAdCost: string;
     // ----------------------------------
     clickRate: number; //클릭율
-    DescAvgShowRank: string;
-    DescAvgCpc: string;
-    DescAdCost: string;
 }
 
 //csv
