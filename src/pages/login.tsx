@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, Space } from 'antd';
+import { Button, Input } from 'antd';
 import axios from 'axios';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useLoginStore, { useLoginState, useLoginAction } from '../store/useLoginStore';
+import { useLoginAction } from '../store/useLoginStore';
 
 const onFinish = (values: any) => {
     console.log('Received values of form:', values);
@@ -34,7 +34,10 @@ export const Login = () => {
         console.log(password);
         axios({
             method: 'POST', //post
-            url: `http://localhost:8080/api/account/login`,
+            // url: `http://localhost:8080/api/account/login`,
+            url: `http://52.78.148.203:8080/api/account/login`,
+            // baseURL: 'http://localhost:8080',
+            // baseURL: 'http://43.201.114.207:8080/',
             data: {
                 name: email,
                 password: password,
