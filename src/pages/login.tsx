@@ -35,7 +35,7 @@ export const Login = () => {
         axios({
             method: 'POST', //post
             // url: `http://localhost:8080/api/account/login`,
-            url: `http://52.78.148.203:8080/api/account/login`,
+            url: `http://13.125.210.93:8080/api/account/login`,
             // baseURL: 'http://localhost:8080',
             // baseURL: 'http://43.201.114.207:8080/',
             data: {

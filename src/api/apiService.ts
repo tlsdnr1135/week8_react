@@ -4,7 +4,7 @@ import { KeyWordType } from '../DataType/redAdType';
 //헤더
 export const API = axios.create({
     // baseURL: 'http://localhost:8080',
-    baseURL: 'http://52.78.148.203:8080',
+    baseURL: 'http://13.125.210.93:8080',
     headers: {
         ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
         'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ export const API = axios.create({
 });
 export const APIFILE = axios.create({
     // baseURL: 'http://localhost:8080',
-    baseURL: 'http://52.78.148.203:8080',
+    baseURL: 'http://13.125.210.93:8080',
     headers: {
         ImSulbinHeader: localStorage.getItem('ACCESS_TOKEN'),
         'Content-Type': 'multipart/form-data; charset=utf-8',
